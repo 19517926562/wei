@@ -80,15 +80,15 @@ body{
   border-radius:99px;
 }
 
-/* ========== 葡萄串 ========== */
+/* ========== 葡萄串（9 颗） ========== */
 .vine{
-  position:absolute;left:7%;top:9%;
-  width:120px;height:130px;
+  position:absolute;left:7%;top:8%;
+  width:120px;height:205px;
   transition:opacity .4s,transform .4s;
 }
 .leaf{
-  position:absolute;left:56px;top:-20px;
-  width:36px;height:24px;
+  position:absolute;left:52px;top:-20px;
+  width:38px;height:26px;
   background:linear-gradient(140deg,#a8eb7c,#5fbf3f);
   border-radius:0 100% 0 100%;
   transform:rotate(-20deg);
@@ -98,14 +98,14 @@ body{
 }
 /* 叶子飘落动画 */
 .leaf.falling{
-  animation:leafFall 2.3s cubic-bezier(.4,.05,.6,1) forwards;
+  animation:leafFall 2.4s cubic-bezier(.4,.05,.6,1) forwards;
 }
 @keyframes leafFall{
   0%   {transform:rotate(-20deg) translate(0,0);       opacity:1;}
-  22%  {transform:rotate(25deg)  translate(-8px,58px); opacity:.96;}
-  48%  {transform:rotate(-25deg) translate(4px,135px); opacity:.78;}
-  74%  {transform:rotate(35deg)  translate(-14px,215px); opacity:.42;}
-  100% {transform:rotate(10deg)  translate(8px,295px); opacity:0;}
+  22%  {transform:rotate(25deg)  translate(-8px,60px); opacity:.96;}
+  48%  {transform:rotate(-25deg) translate(4px,140px); opacity:.78;}
+  74%  {transform:rotate(35deg)  translate(-14px,220px); opacity:.42;}
+  100% {transform:rotate(10deg)  translate(8px,300px); opacity:0;}
 }
 
 .grape{
@@ -134,7 +134,6 @@ body{
 .cup-wrap{
   position:absolute;left:50%;bottom:34px;
   transform:translateX(-50%);
-  /* 让杯子移动有Q弹感 */
   transition:transform .95s cubic-bezier(.34,1.56,.64,1);
 }
 .shadow{
@@ -323,6 +322,28 @@ body{
   50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
 }
 
+/* ---------- 🆕 结尾弹出的爱心（在右上角，不遮文字） ---------- */
+.final-heart{
+  position:absolute;
+  top:14px; right:16px;
+  font-size:30px; line-height:1;
+  opacity:0;
+  transform:scale(0) rotate(-25deg);
+  transition:opacity .3s, transform .55s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+  z-index:2;
+  filter:drop-shadow(0 4px 8px rgba(255,120,180,.45));
+}
+.final-heart.show{
+  opacity:1;
+  transform:scale(1) rotate(0deg);
+  animation:finalHeartPulse 1.5s ease-in-out .55s infinite;
+}
+@keyframes finalHeartPulse{
+  0%,100%{transform:scale(1) rotate(0deg);}
+  50%    {transform:scale(1.14) rotate(4deg);}
+}
+
 /* ---------- 图标：可爱葡萄酸奶 ---------- */
 .icon-wrap{
   position:relative;z-index:1;
@@ -447,6 +468,9 @@ body{
   <div class="modal" id="modal">
     <div class="card">
 
+      <!-- 🆕 结尾弹出的爱心（右上角，不遮文字） -->
+      <div class="final-heart" id="finalHeart">💗</div>
+
       <!-- 会动的心心 / 彩带装饰 -->
       <div class="deco" id="deco"></div>
 
@@ -532,7 +556,6 @@ body{
 
   /* ======================================================
      🎧 解压音效引擎（Web Audio 合成，无需外部文件）
-     —— 全面柔化版 ——
      ====================================================== */
   const SFX = (function(){
     let ctx = null;
@@ -569,7 +592,6 @@ body{
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     }
 
-    /* 单音（可滑音） */
     function blip(freq, dur, type, peak, slideTo){
       if(!enabled) return;
       const c = getCtx(); if(!c) return;
@@ -584,7 +606,6 @@ body{
       o.start(t); o.stop(t + dur + 0.04);
     }
 
-    /* 噪声打击 / 沙沙声 */
     function noiseHit(dur, freq, q, peak, type){
       if(!enabled) return;
       const c = getCtx(); if(!c) return;
@@ -603,31 +624,21 @@ body{
     }
 
     return {
-      /* 摘葡萄：轻快的"啵" */
+      /* 🆕 摘葡萄：唯一保留的声音，柔柔糯糯的"啵" */
       pick(){
-        const base = rand(760, 940);
-        blip(base, 0.11, 'sine', 0.085, base * 1.7);
+        const base = rand(680, 760);
+        blip(base, 0.14, 'sine', 0.072, base * 1.55);
       },
 
-      /* 🆕 葡萄落杯：改成软软糯糯的"咕咚"入水声 */
-      dropIn(){
-        // 主音：从高往低滑，像小气泡破裂
-        blip(rand(660,720), 0.22, 'sine', 0.06, 340);
-        // 一点轻柔水声，用低通使高频不刺耳
-        noiseHit(0.14, 620, 0.9, 0.018, 'lowpass');
-        // 小尾巴
-        setTimeout(() => blip(300, 0.16, 'sine', 0.03, 220), 55);
-      },
+      /* 葡萄落杯：不再播放额外音效（去掉） */
 
-      /* 🆕 捣碎：更温和的"噗噗"声，不再闷重 */
+      /* 🆕 捣碎：更轻柔的"噗"，音量再降一点 */
       mash(){
-        // 低频轻轻下沉，音量降低
-        blip(rand(200,230), 0.16, 'sine', 0.055, 130);
-        // 极轻的低通噪声，像泥巴压下去
-        noiseHit(0.1, 260, 0.6, 0.015, 'lowpass');
+        blip(rand(180,210), 0.18, 'sine', 0.045, 120);
+        noiseHit(0.09, 240, 0.55, 0.011, 'lowpass');
       },
 
-      /* 🆕 倒酸奶：去掉刺耳沙沙，改成柔和的"咕嘟" */
+      /* 倒酸奶：柔和低频"咕嘟"，不刺耳 */
       pourStart(){
         if(!enabled) return;
         const c = getCtx(); if(!c) return;
@@ -638,13 +649,11 @@ body{
         src.buffer = buf;
         src.loop = true;
 
-        // 用低通替代带通，削掉高频毛刺
         const lp = c.createBiquadFilter();
         lp.type = 'lowpass';
         lp.frequency.value = 520;
         lp.Q.value = 0.7;
 
-        // 再补一层很轻的带通，只留液体感的中低频
         const bp = c.createBiquadFilter();
         bp.type = 'bandpass';
         bp.frequency.value = 380;
@@ -653,9 +662,8 @@ body{
         const g = c.createGain();
         const t = c.currentTime;
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.linearRampToValueAtTime(0.038, t + 0.22);   // 音量明显降低
+        g.gain.linearRampToValueAtTime(0.038, t + 0.22);
 
-        // LFO 轻微颤动，让液体声更活
         const lfo = c.createOscillator();
         lfo.type = 'sine';
         lfo.frequency.value = 4.6;
@@ -682,13 +690,15 @@ body{
         pourNode = null;
       },
 
-      /* 搅拌：轻柔沙沙声（自动节流） */
+      /* 🆕 搅拌：换成圆润轻柔的"噜噜"声 */
       stir(){
         if(!enabled) return;
         const now = performance.now();
-        if(now - lastStir < 130) return;
+        if(now - lastStir < 155) return;
         lastStir = now;
-        noiseHit(0.13, 1400 + rand(-200, 200), 1.8, 0.032, 'bandpass');
+        const f = rand(300, 380);
+        blip(f, 0.08, 'triangle', 0.024, f * 1.45);
+        noiseHit(0.06, 850, 0.7, 0.009, 'lowpass');
       },
 
       /* 完成：上行琶音 + 闪光 */
@@ -706,13 +716,11 @@ body{
         }, 380);
       },
 
-      /* 🆕 打字：Q弹的"啵"声（每个字都有，短促圆润） */
+      /* 🆕 打字：Q弹的"啵"声（每个字） */
       type(){
         if(!enabled) return;
         const f = rand(720, 880);
-        // 主体：圆润三角波向上滑，像小皮球弹一下
         blip(f, 0.065, 'triangle', 0.042, f * 1.85);
-        // 叠加一个高频小点，增加"弹"感
         const f2 = f * 1.9;
         setTimeout(() => {
           if(!enabled) return;
@@ -720,7 +728,17 @@ body{
         }, 22);
       },
 
-      /* 按钮点击 */
+      /* 🆕 爱心弹出：圆润的小泡泡音 */
+      heartPop(){
+        if(!enabled) return;
+        const f = 620;
+        blip(f, 0.12, 'sine', 0.06, f * 1.7);
+        setTimeout(() => {
+          if(!enabled) return;
+          blip(f * 1.6, 0.14, 'sine', 0.045, f * 2.4);
+        }, 60);
+      },
+
       click(){
         blip(680, 0.1, 'triangle', 0.08, 1020);
       },
@@ -753,6 +771,7 @@ body{
 
   const deco      = $('#deco');
   const cardText  = $('#cardText');
+  const finalHeart= $('#finalHeart');
 
   /* ================= 颜色 ================= */
   const C_JUICE   = [165,105,225];
@@ -765,7 +784,8 @@ body{
   let pouring = false;
   let cupCentered = false;
 
-  const CARD_LINES = ['宝宝', '晚饭少吃点o', '我给你点杯酸奶'];
+  /* 🆕 新文案 */
+  const CARD_LINES = ['宝宝', '晚饭少吃点o', '我请你喝酸奶'];
   let typeTimer = null;
   let openTimer = null;
 
@@ -773,7 +793,7 @@ body{
     return {
       phase:'pick',
       picked:0,
-      total:6,
+      total:9,          /* 🆕 9 颗葡萄 */
       mash:0,
       pour:0,
       pourDone:false,
@@ -785,11 +805,13 @@ body{
     };
   }
 
-  /* ================= 葡萄位置 ================= */
+  /* 🆕 9 颗葡萄的排列位置 */
   const GRAPE_POS = [
-    [24,0],[60,0],
-    [6,40],[42,40],[78,40],
-    [42,80]
+    [42, 0],
+    [24, 40], [60, 40],
+    [6, 80], [42, 80], [78, 80],
+    [24, 120], [60, 120],
+    [42, 160]
   ];
 
   /* ================= 液体控制 ================= */
@@ -836,14 +858,14 @@ body{
     }
   }
 
-  /* ================= 🆕 叶子自然飘落 ================= */
+  /* ================= 叶子自然飘落 ================= */
   function dropLeaf(){
     const leaf = vine.querySelector('.leaf');
     if(!leaf || leaf.classList.contains('falling')) return;
     leaf.classList.add('falling');
   }
 
-  /* ================= 🆕 把杯子移到屏幕中间 ================= */
+  /* ================= 把杯子移到屏幕中间 ================= */
   function centerCup(){
     if(cupCentered) return;
     cupCentered = true;
@@ -851,7 +873,6 @@ body{
     const stageRect = stage.getBoundingClientRect();
     const wrapRect  = cupWrap.getBoundingClientRect();
 
-    // 目标：杯子中心落在舞台的 48% 高度处
     const targetCenterY  = stageRect.top + stageRect.height * 0.48;
     const currentCenterY = wrapRect.top + wrapRect.height / 2;
     const dy = targetCenterY - currentCenterY;
@@ -882,6 +903,7 @@ body{
     el.style.pointerEvents = 'none';
     el.style.animation = 'none';
 
+    /* 🆕 唯一保留的音效：柔柔的"啵" */
     SFX.pick();
 
     const gRect = el.getBoundingClientRect();
@@ -897,9 +919,9 @@ body{
     ], {duration:660, easing:'cubic-bezier(.5,-0.15,.55,1)', fill:'forwards'});
     fly.onfinish = () => el.remove();
 
+    /* 🆕 落杯只有动作 + 水花，不再播放音效 */
     setTimeout(() => {
-      SFX.dropIn();
-      bumpCup(0.9);
+      bumpCup(0.85);
       splash(6, '#cf9df2');
     }, 420);
 
@@ -909,18 +931,17 @@ body{
     const col = mix([205,175,240], C_JUICE, t);
     setLiquid(h, rgb(col));
 
-    /* 🆕 最后一颗葡萄：叶子飘落 + 杯子移到中间 */
+    /* 最后一颗葡萄：叶子飘落 + 杯子移到中间 */
     if(state.picked >= state.total){
       setTimeout(() => {
         dropLeaf();
         centerCup();
       }, 700);
-      // 给杯子移动 + 叶子飘落留够时间，再开始捣碎
       setTimeout(startMash, 1950);
     }
   }
 
-  /* ================= 阶段 2：捣碎（更温和） ================= */
+  /* ================= 阶段 2：捣碎（更缓慢、更柔和） ================= */
   function startMash(){
     state.phase = 'mash';
     state.mash = 0;
@@ -940,16 +961,16 @@ body{
     state.mash = Math.min(100, state.mash + 9);
     progressFill.style.width = state.mash + '%';
 
-    /* 🆕 动作幅度更小、更柔和 */
+    /* 🆕 动画更慢、更柔和，幅度更小 */
     muddler.animate([
       {transform:'translateY(0) rotate(0deg) scale(1)'},
-      {transform:'translateY(36px) rotate(2deg) scale(1)'},
-      {transform:'translateY(-4px) rotate(-1deg) scale(1)'},
+      {transform:'translateY(24px) rotate(1.5deg) scale(1)'},
+      {transform:'translateY(-3px) rotate(-0.8deg) scale(1)'},
       {transform:'translateY(0) rotate(0deg) scale(1)'}
-    ], {duration:340, easing:'cubic-bezier(.4,1.4,.5,1)'});
+    ], {duration:520, easing:'cubic-bezier(.45,1.2,.55,1)'});
 
-    bumpCup(0.42);          // 原 0.7 → 0.42，杯子更温柔地弹一下
-    splash(2, '#c88cf0');   // 原 3 → 2
+    bumpCup(0.32);
+    splash(2, '#c88cf0');
 
     const t = state.mash / 100;
     const col = mix(C_JUICE, C_MASHED, t);
@@ -1182,6 +1203,7 @@ body{
   function typeText(){
     clearTimeout(typeTimer);
     cardText.innerHTML = '';
+    finalHeart.classList.remove('show');   /* 🆕 重置爱心 */
 
     const lineEls = CARD_LINES.map(() => {
       const d = document.createElement('div');
@@ -1198,6 +1220,11 @@ body{
         lineEls.forEach(el => el.classList.remove('typing'));
         typeTimer = setTimeout(() => {
           againBtn.classList.add('show');
+          /* 🆕 最后冒出一个爱心 + 音效 */
+          setTimeout(() => {
+            finalHeart.classList.add('show');
+            SFX.heartPop();
+          }, 220);
         }, 320);
         return;
       }
@@ -1207,7 +1234,7 @@ body{
       if(ci < line.length){
         lineEls[li].classList.add('typing');
         lineEls[li].textContent += line[ci];
-        SFX.type();                       // 🆕 Q弹打字音效
+        SFX.type();
         ci++;
         typeTimer = setTimeout(step, 180);
       }else{
@@ -1227,6 +1254,7 @@ body{
 
     cardText.innerHTML = '';
     againBtn.classList.remove('show');
+    finalHeart.classList.remove('show');
     buildDeco();
 
     openTimer = setTimeout(typeText, 520);
@@ -1262,6 +1290,7 @@ body{
     game.querySelectorAll('.confetti').forEach(el => el.remove());
     deco.innerHTML = '';
     cardText.innerHTML = '';
+    finalHeart.classList.remove('show');
 
     liquid.style.height = '0%';
     liquid.style.background = 'transparent';
@@ -1275,7 +1304,6 @@ body{
     modal.classList.remove('show');
     againBtn.classList.remove('show');
 
-    // 🆕 杯子回到原位
     cupWrap.style.transform = '';
     cupCentered = false;
 
