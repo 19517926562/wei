@@ -93,7 +93,21 @@ body{
   border-radius:0 100% 0 100%;
   transform:rotate(-20deg);
   box-shadow:0 3px 6px rgba(70,150,40,.25);
+  transform-origin:30% 50%;
+  will-change:transform,opacity;
 }
+/* 叶子飘落动画 */
+.leaf.falling{
+  animation:leafFall 2.3s cubic-bezier(.4,.05,.6,1) forwards;
+}
+@keyframes leafFall{
+  0%   {transform:rotate(-20deg) translate(0,0);       opacity:1;}
+  22%  {transform:rotate(25deg)  translate(-8px,58px); opacity:.96;}
+  48%  {transform:rotate(-25deg) translate(4px,135px); opacity:.78;}
+  74%  {transform:rotate(35deg)  translate(-14px,215px); opacity:.42;}
+  100% {transform:rotate(10deg)  translate(8px,295px); opacity:0;}
+}
+
 .grape{
   position:absolute;width:36px;height:36px;border-radius:50%;
   background:radial-gradient(circle at 32% 26%,#dcb0ff 0%,#a86ae0 45%,#7d3fc0 100%);
@@ -120,6 +134,8 @@ body{
 .cup-wrap{
   position:absolute;left:50%;bottom:34px;
   transform:translateX(-50%);
+  /* 让杯子移动有Q弹感 */
+  transition:transform .95s cubic-bezier(.34,1.56,.64,1);
 }
 .shadow{
   position:absolute;left:50%;bottom:-16px;
@@ -456,14 +472,11 @@ body{
             </clipPath>
           </defs>
 
-          <!-- 地面阴影 -->
           <ellipse cx="70" cy="129" rx="33" ry="6.5" fill="#b06ad3" opacity=".16"/>
 
-          <!-- 杯身 -->
           <path d="M40 46 L100 46 L95 116 Q94 124 86 124 L54 124 Q46 124 45 116 Z"
                 fill="url(#cCup)" stroke="#c9a8e8" stroke-width="3.5" stroke-linejoin="round"/>
 
-          <!-- 里面的葡萄酸奶 -->
           <g clip-path="url(#cClip)">
             <rect x="34" y="64" width="72" height="72" fill="url(#cLiquid)"/>
             <ellipse cx="70" cy="64" rx="42" ry="8" fill="#f4e9ff" opacity=".92"/>
@@ -472,11 +485,9 @@ body{
             <circle cx="66" cy="108" r="4.2" fill="#8a4bc0" opacity=".28"/>
           </g>
 
-          <!-- 杯口 -->
           <ellipse cx="70" cy="46" rx="30" ry="7.5"
                    fill="#ffffff" stroke="#c9a8e8" stroke-width="3.5"/>
 
-          <!-- 可爱的脸 -->
           <circle cx="58" cy="80" r="3.6" fill="#5a3d7a"/>
           <circle cx="82" cy="80" r="3.6" fill="#5a3d7a"/>
           <path d="M63.5 90.5 Q70 97 76.5 90.5"
@@ -484,7 +495,6 @@ body{
           <ellipse cx="49" cy="88" rx="5.2" ry="3.4" fill="#ffb3d9" opacity=".75"/>
           <ellipse cx="91" cy="88" rx="5.2" ry="3.4" fill="#ffb3d9" opacity=".75"/>
 
-          <!-- 杯口的葡萄 + 小叶子 -->
           <g class="grapeTop">
             <path d="M70 20 Q73 11 80 8"
                   stroke="#7bc04a" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -497,13 +507,11 @@ body{
             <circle cx="85" cy="32" r="2.6" fill="#fff" opacity=".7"/>
           </g>
 
-          <!-- 小爱心点缀 -->
           <path d="M108 22 q4 -5 8 0 q-2 6 -8 10 q-6 -4 -8 -10 q4 -5 8 0 Z"
                 fill="#ff9ec7" opacity=".85"/>
         </svg>
       </div>
 
-      <!-- 逐字输出的文案（JS 填充） -->
       <p class="card-text" id="cardText"></p>
 
       <button class="btn" id="againBtn">再来一杯 🍇</button>
@@ -524,13 +532,14 @@ body{
 
   /* ======================================================
      🎧 解压音效引擎（Web Audio 合成，无需外部文件）
+     —— 全面柔化版 ——
      ====================================================== */
   const SFX = (function(){
     let ctx = null;
     let enabled = true;
     let noiseBuf = null;
-    let pourNode = null;      // 倒酸奶的持续音
-    let lastStir = 0;         // 搅拌音效节流
+    let pourNode = null;
+    let lastStir = 0;
 
     function getCtx(){
       if(!ctx){
@@ -554,7 +563,6 @@ body{
       return noiseBuf;
     }
 
-    /* 简易包络 */
     function env(g, t, attack, dur, peak){
       g.gain.setValueAtTime(0.0001, t);
       g.gain.linearRampToValueAtTime(peak, t + attack);
@@ -598,22 +606,28 @@ body{
       /* 摘葡萄：轻快的"啵" */
       pick(){
         const base = rand(760, 940);
-        blip(base, 0.11, 'sine', 0.10, base * 1.7);
+        blip(base, 0.11, 'sine', 0.085, base * 1.7);
       },
 
-      /* 葡萄落杯：小水花 */
+      /* 🆕 葡萄落杯：改成软软糯糯的"咕咚"入水声 */
       dropIn(){
-        noiseHit(0.14, 1500, 1.6, 0.055, 'bandpass');
-        blip(420, 0.16, 'sine', 0.09, 190);
+        // 主音：从高往低滑，像小气泡破裂
+        blip(rand(660,720), 0.22, 'sine', 0.06, 340);
+        // 一点轻柔水声，用低通使高频不刺耳
+        noiseHit(0.14, 620, 0.9, 0.018, 'lowpass');
+        // 小尾巴
+        setTimeout(() => blip(300, 0.16, 'sine', 0.03, 220), 55);
       },
 
-      /* 捣碎：闷闷的"咚" */
+      /* 🆕 捣碎：更温和的"噗噗"声，不再闷重 */
       mash(){
-        blip(rand(150,190), 0.13, 'sine', 0.14, 72);
-        noiseHit(0.09, 420, 1.1, 0.05, 'lowpass');
+        // 低频轻轻下沉，音量降低
+        blip(rand(200,230), 0.16, 'sine', 0.055, 130);
+        // 极轻的低通噪声，像泥巴压下去
+        noiseHit(0.1, 260, 0.6, 0.015, 'lowpass');
       },
 
-      /* 倒酸奶：持续的咕嘟声 */
+      /* 🆕 倒酸奶：去掉刺耳沙沙，改成柔和的"咕嘟" */
       pourStart(){
         if(!enabled) return;
         const c = getCtx(); if(!c) return;
@@ -624,25 +638,32 @@ body{
         src.buffer = buf;
         src.loop = true;
 
+        // 用低通替代带通，削掉高频毛刺
+        const lp = c.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 520;
+        lp.Q.value = 0.7;
+
+        // 再补一层很轻的带通，只留液体感的中低频
         const bp = c.createBiquadFilter();
         bp.type = 'bandpass';
-        bp.frequency.value = 720;
-        bp.Q.value = 1.05;
+        bp.frequency.value = 380;
+        bp.Q.value = 0.8;
 
         const g = c.createGain();
         const t = c.currentTime;
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.linearRampToValueAtTime(0.075, t + 0.16);
+        g.gain.linearRampToValueAtTime(0.038, t + 0.22);   // 音量明显降低
 
-        // 轻微颤动，让声音更像液体
+        // LFO 轻微颤动，让液体声更活
         const lfo = c.createOscillator();
         lfo.type = 'sine';
-        lfo.frequency.value = 6.5;
+        lfo.frequency.value = 4.6;
         const lfoG = c.createGain();
-        lfoG.gain.value = 150;
+        lfoG.gain.value = 55;
         lfo.connect(lfoG).connect(bp.frequency);
 
-        src.connect(bp).connect(g).connect(c.destination);
+        src.connect(lp).connect(bp).connect(g).connect(c.destination);
         src.start(); lfo.start();
 
         pourNode = {src, g, lfo};
@@ -655,9 +676,9 @@ body{
         const t = c.currentTime;
         g.gain.cancelScheduledValues(t);
         g.gain.setValueAtTime(g.gain.value, t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
-        src.stop(t + 0.28);
-        lfo.stop(t + 0.28);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+        src.stop(t + 0.32);
+        lfo.stop(t + 0.32);
         pourNode = null;
       },
 
@@ -667,7 +688,7 @@ body{
         const now = performance.now();
         if(now - lastStir < 130) return;
         lastStir = now;
-        noiseHit(0.13, 1700 + rand(-260, 260), 2.4, 0.042, 'bandpass');
+        noiseHit(0.13, 1400 + rand(-200, 200), 1.8, 0.032, 'bandpass');
       },
 
       /* 完成：上行琶音 + 闪光 */
@@ -676,27 +697,34 @@ body{
         const notes = [523.25, 659.25, 783.99, 1046.50];
         notes.forEach((f, i) => {
           setTimeout(() => {
-            blip(f, 0.55, 'sine', 0.11);
-            blip(f * 2, 0.35, 'sine', 0.03);
+            blip(f, 0.55, 'sine', 0.105);
+            blip(f * 2, 0.35, 'sine', 0.028);
           }, i * 115);
         });
         setTimeout(() => {
-          noiseHit(0.5, 5200, 0.8, 0.035, 'highpass');
+          noiseHit(0.5, 4800, 0.7, 0.028, 'highpass');
         }, 380);
       },
 
-      /* 打字：很轻的"嗒" */
+      /* 🆕 打字：Q弹的"啵"声（每个字都有，短促圆润） */
       type(){
         if(!enabled) return;
-        noiseHit(0.035, 2300 + rand(-300, 300), 3, 0.024, 'bandpass');
+        const f = rand(720, 880);
+        // 主体：圆润三角波向上滑，像小皮球弹一下
+        blip(f, 0.065, 'triangle', 0.042, f * 1.85);
+        // 叠加一个高频小点，增加"弹"感
+        const f2 = f * 1.9;
+        setTimeout(() => {
+          if(!enabled) return;
+          blip(f2, 0.045, 'sine', 0.018, f2 * 1.25);
+        }, 22);
       },
 
       /* 按钮点击 */
       click(){
-        blip(680, 0.1, 'triangle', 0.09, 1020);
+        blip(680, 0.1, 'triangle', 0.08, 1020);
       },
 
-      /* 静音控制 */
       setEnabled(v){
         enabled = v;
         if(!v) this.pourStop();
@@ -723,7 +751,6 @@ body{
   const progressFill = $('#progressFill');
   const soundBtn  = $('#soundBtn');
 
-  /* 弹窗相关 */
   const deco      = $('#deco');
   const cardText  = $('#cardText');
 
@@ -736,6 +763,7 @@ body{
   /* ================= 状态 ================= */
   let state;
   let pouring = false;
+  let cupCentered = false;
 
   const CARD_LINES = ['宝宝', '晚饭少吃点o', '我给你点杯酸奶'];
   let typeTimer = null;
@@ -808,6 +836,29 @@ body{
     }
   }
 
+  /* ================= 🆕 叶子自然飘落 ================= */
+  function dropLeaf(){
+    const leaf = vine.querySelector('.leaf');
+    if(!leaf || leaf.classList.contains('falling')) return;
+    leaf.classList.add('falling');
+  }
+
+  /* ================= 🆕 把杯子移到屏幕中间 ================= */
+  function centerCup(){
+    if(cupCentered) return;
+    cupCentered = true;
+
+    const stageRect = stage.getBoundingClientRect();
+    const wrapRect  = cupWrap.getBoundingClientRect();
+
+    // 目标：杯子中心落在舞台的 48% 高度处
+    const targetCenterY  = stageRect.top + stageRect.height * 0.48;
+    const currentCenterY = wrapRect.top + wrapRect.height / 2;
+    const dy = targetCenterY - currentCenterY;
+
+    cupWrap.style.transform = `translateX(-50%) translateY(${dy}px)`;
+  }
+
   /* ================= 阶段 1：摘葡萄 ================= */
   function initPick(){
     state.phase = 'pick';
@@ -831,7 +882,6 @@ body{
     el.style.pointerEvents = 'none';
     el.style.animation = 'none';
 
-    // 🔊 摘葡萄音效
     SFX.pick();
 
     const gRect = el.getBoundingClientRect();
@@ -847,9 +897,8 @@ body{
     ], {duration:660, easing:'cubic-bezier(.5,-0.15,.55,1)', fill:'forwards'});
     fly.onfinish = () => el.remove();
 
-    // 落杯瞬间的反馈
     setTimeout(() => {
-      SFX.dropIn();          // 🔊 落水音效
+      SFX.dropIn();
       bumpCup(0.9);
       splash(6, '#cf9df2');
     }, 420);
@@ -860,16 +909,22 @@ body{
     const col = mix([205,175,240], C_JUICE, t);
     setLiquid(h, rgb(col));
 
+    /* 🆕 最后一颗葡萄：叶子飘落 + 杯子移到中间 */
     if(state.picked >= state.total){
-      setTimeout(startMash, 800);
+      setTimeout(() => {
+        dropLeaf();
+        centerCup();
+      }, 700);
+      // 给杯子移动 + 叶子飘落留够时间，再开始捣碎
+      setTimeout(startMash, 1950);
     }
   }
 
-  /* ================= 阶段 2：捣碎 ================= */
+  /* ================= 阶段 2：捣碎（更温和） ================= */
   function startMash(){
     state.phase = 'mash';
     state.mash = 0;
-    hint.textContent = '快速点击杯子，把葡萄捣成泥～';
+    hint.textContent = '轻轻点击杯子，把葡萄捣成泥～';
     muddler.classList.add('show');
     progressBar.classList.add('show');
     progressFill.style.width = '0%';
@@ -880,21 +935,21 @@ body{
     if(state.phase !== 'mash') return;
     e.preventDefault();
 
-    // 🔊 捣碎音效
     SFX.mash();
 
     state.mash = Math.min(100, state.mash + 9);
     progressFill.style.width = state.mash + '%';
 
+    /* 🆕 动作幅度更小、更柔和 */
     muddler.animate([
       {transform:'translateY(0) rotate(0deg) scale(1)'},
-      {transform:'translateY(52px) rotate(4deg) scale(1)'},
-      {transform:'translateY(-6px) rotate(-2deg) scale(1)'},
+      {transform:'translateY(36px) rotate(2deg) scale(1)'},
+      {transform:'translateY(-4px) rotate(-1deg) scale(1)'},
       {transform:'translateY(0) rotate(0deg) scale(1)'}
-    ], {duration:280, easing:'cubic-bezier(.4,1.6,.5,1)'});
+    ], {duration:340, easing:'cubic-bezier(.4,1.4,.5,1)'});
 
-    bumpCup(0.7);
-    splash(3, '#c88cf0');
+    bumpCup(0.42);          // 原 0.7 → 0.42，杯子更温柔地弹一下
+    splash(2, '#c88cf0');   // 原 3 → 2
 
     const t = state.mash / 100;
     const col = mix(C_JUICE, C_MASHED, t);
@@ -930,14 +985,14 @@ body{
     e.stopPropagation();
     pouring = true;
     yogurt.classList.add('pouring');
-    SFX.pourStart();          // 🔊 开始倒酸奶音效
+    SFX.pourStart();
   }
 
   window.addEventListener('pointerup', () => {
     if(!pouring) return;
     pouring = false;
     yogurt.classList.remove('pouring');
-    SFX.pourStop();           // 🔊 停止倒酸奶音效
+    SFX.pourStop();
   });
 
   function renderPour(){
@@ -952,7 +1007,7 @@ body{
       state.pourDone = true;
       pouring = false;
       yogurt.classList.remove('pouring');
-      SFX.pourStop();         // 🔊 倒完停止音效
+      SFX.pourStop();
 
       setTimeout(() => {
         if(state.phase !== 'pour') return;
@@ -1010,7 +1065,6 @@ body{
     state.lastAngle = a;
     state.stirAcc += Math.abs(d);
 
-    // 🔊 搅拌沙沙声（内部自动节流）
     if(Math.abs(d) > 0.01) SFX.stir();
 
     const p = Math.min(100, (state.stirAcc / (Math.PI * 4.5)) * 100);
@@ -1039,7 +1093,7 @@ body{
     progressBar.classList.remove('show');
     hint.textContent = '完成啦！✨';
 
-    SFX.finish();              // 🔊 完成音效
+    SFX.finish();
 
     setLiquid(86, rgb(C_FINAL));
 
@@ -1153,7 +1207,7 @@ body{
       if(ci < line.length){
         lineEls[li].classList.add('typing');
         lineEls[li].textContent += line[ci];
-        SFX.type();                       // 🔊 打字音效
+        SFX.type();                       // 🆕 Q弹打字音效
         ci++;
         typeTimer = setTimeout(step, 180);
       }else{
@@ -1201,7 +1255,7 @@ body{
 
     clearTimeout(typeTimer);
     clearTimeout(openTimer);
-    SFX.pourStop();           // 防止残留音效
+    SFX.pourStop();
 
     vine.innerHTML = '<div class="leaf"></div>';
     cup.querySelectorAll('.drop').forEach(el => el.remove());
@@ -1221,6 +1275,10 @@ body{
     modal.classList.remove('show');
     againBtn.classList.remove('show');
 
+    // 🆕 杯子回到原位
+    cupWrap.style.transform = '';
+    cupCentered = false;
+
     pouring = false;
     state = newState();
 
@@ -1237,7 +1295,7 @@ body{
     if(on) SFX.click();
   });
 
-  /* 首次交互时唤醒音频上下文（浏览器策略要求） */
+  /* 首次交互时唤醒音频上下文 */
   function wakeAudio(){
     SFX.resume();
     window.removeEventListener('pointerdown', wakeAudio);
