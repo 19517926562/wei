@@ -82,63 +82,68 @@ body{
   border-radius:99px;
 }
 
-/* ========== 🆕 葡萄串：卡通版，两串对称分布在杯子上方两侧 ========== */
+/* ========== 🆕 葡萄串：两串，紧凑排列，对称分布 ========== */
 .vine{
   position:absolute;
-  left:0;top:6%;
-  width:100%;height:240px;
-  pointer-events:none;
+  top:7%;
+  left:50%;
+  width:0;
+  height:0;
   transition:opacity .4s;
+  pointer-events:none;
 }
+.vine-left  { transform: translateX(-100px); }
+.vine-right { transform: translateX(100px); }
 
 /* 卡通圆润叶子 */
 .leaf{
   position:absolute;
-  width:42px;height:28px;
+  width:38px;height:26px;
   background:linear-gradient(140deg,#b5f08a,#6dc94a);
   border-radius:0 100% 0 100%;
   box-shadow:
     0 3px 8px rgba(70,150,40,.28),
-    inset -3px -4px 6px rgba(70,150,40,.25),
+    inset -3px -4px 6px rgba(70,150,40,.22),
     inset 3px 3px 6px rgba(255,255,255,.4);
   transform-origin:30% 50%;
   will-change:transform,opacity;
+  pointer-events:none;
 }
 /* 左串的叶子 */
 .leaf-1{
-  left:calc(22% - 21px);
-  top:-28px;
-  transform:rotate(-28deg);
+  left:-22px;
+  top:-22px;
+  transform:rotate(-30deg);
 }
 /* 右串的叶子 */
 .leaf-2{
-  left:calc(78% - 21px);
-  top:-28px;
-  transform:rotate(-12deg);
+  left:-12px;
+  top:-22px;
+  transform:rotate(-10deg);
 }
 
-/* 🆕 左叶：向左下方飘落 */
+/* 左叶飘落：向左下方 */
 .leaf-1.falling{
   animation:leafFallLeft 2.6s cubic-bezier(.4,.05,.6,1) forwards;
 }
 @keyframes leafFallLeft{
-  0%   {transform:rotate(-28deg) translate(0,0) scale(1);        opacity:1;}
-  20%  {transform:rotate(20deg)  translate(-25px,55px) scale(1); opacity:.95;}
-  45%  {transform:rotate(-30deg) translate(-58px,128px) scale(.98); opacity:.75;}
-  70%  {transform:rotate(35deg)  translate(-38px,208px) scale(.95); opacity:.42;}
-  100% {transform:rotate(-10deg) translate(-72px,292px) scale(.9);  opacity:0;}
+  0%   {transform:rotate(-30deg) translate(0,0);         opacity:1;}
+  25%  {transform:rotate(15deg)  translate(-18px,62px);  opacity:.95;}
+  50%  {transform:rotate(-40deg) translate(-45px,142px); opacity:.75;}
+  75%  {transform:rotate(25deg)  translate(-28px,222px); opacity:.4;}
+  100% {transform:rotate(-15deg) translate(-62px,300px); opacity:0;}
 }
 
-/* 🆕 右叶：向右下方飘落 */
+/* 右叶飘落：向右下方 */
 .leaf-2.falling{
   animation:leafFallRight 2.8s cubic-bezier(.4,.05,.6,1) forwards;
 }
 @keyframes leafFallRight{
-  0%   {transform:rotate(-12deg) translate(0,0) scale(1);        opacity:1;}
-  22%  {transform:rotate(38deg)  translate(32px,62px) scale(1);  opacity:.96;}
-  48%  {transform:rotate(-22deg) translate(64px,132px) scale(.98); opacity:.78;}
-  72%  {transform:rotate(48deg)  translate(48px,218px) scale(.94); opacity:.42;}
-  100% {transform:rotate(18deg)  translate(88px,304px) scale(.9);  opacity:0;}
+  0%   {transform:rotate(-10deg) translate(0,0);         opacity:1;}
+  25%  {transform:rotate(28deg)  translate(22px,55px);   opacity:.96;}
+  50%  {transform:rotate(-35deg) translate(52px,138px);  opacity:.78;}
+  75%  {transform:rotate(32deg)  translate(32px,218px);  opacity:.42;}
+  100% {transform:rotate(-18deg) translate(72px,298px);  opacity:0;}
 }
 
 /* 卡通葡萄：圆润饱满，带高光和柔和阴影 */
@@ -330,7 +335,6 @@ body{
 }
 .modal.show .card{transform:scale(1) translateY(0);}
 
-/* ---------- 弹窗内装饰层 ---------- */
 .deco{
   position:absolute;inset:0;z-index:0;
   pointer-events:none;overflow:hidden;border-radius:32px;
@@ -358,7 +362,6 @@ body{
   50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
 }
 
-/* ---------- 结尾弹出的爱心（简约粉嫩） ---------- */
 .final-heart{
   position:absolute;
   top:14px; right:16px;
@@ -380,7 +383,6 @@ body{
   50%    {transform:scale(1.12) rotate(3deg);}
 }
 
-/* ---------- 图标：可爱葡萄酸奶 ---------- */
 .icon-wrap{
   position:relative;z-index:1;
   display:inline-block;
@@ -405,7 +407,6 @@ body{
   50%    {transform:rotate(3deg);}
 }
 
-/* ---------- 逐字输出的文字（萌萌字体） ---------- */
 .card-text{
   position:relative;z-index:1;
   font-family:"ZCOOL KuaiLe","Comic Sans MS",cursive,sans-serif;
@@ -436,7 +437,6 @@ body{
   50%,100%{opacity:0;}
 }
 
-/* ---------- 按钮 ---------- */
 .btn{
   position:relative;z-index:1;
   border:none;
@@ -456,7 +456,6 @@ body{
 }
 .btn.show:active{transform:scale(.93);}
 
-/* 全屏彩带 */
 .confetti{
   position:absolute;top:-20px;pointer-events:none;z-index:40;
 }
@@ -466,7 +465,6 @@ body{
 
 <div class="game" id="game">
 
-  <!-- 音效开关 -->
   <button class="sound-btn" id="soundBtn" title="音效开关">🔊</button>
 
   <div class="header">
@@ -478,8 +476,10 @@ body{
     <div class="progress" id="progressBar"><i id="progressFill"></i></div>
 
     <!-- 葡萄串：两串对称，各带一片叶子 -->
-    <div class="vine" id="vine">
+    <div class="vine vine-left"  id="vineLeft">
       <div class="leaf leaf-1"></div>
+    </div>
+    <div class="vine vine-right" id="vineRight">
       <div class="leaf leaf-2"></div>
     </div>
 
@@ -503,11 +503,9 @@ body{
     </div>
   </div>
 
-  <!-- ================= 结果弹窗 ================= -->
   <div class="modal" id="modal">
     <div class="card">
 
-      <!-- 结尾弹出的爱心 -->
       <div class="final-heart" id="finalHeart">
         <svg viewBox="0 0 40 40" width="100%" height="100%">
           <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
@@ -517,10 +515,8 @@ body{
         </svg>
       </div>
 
-      <!-- 会动的心心 / 彩带装饰 -->
       <div class="deco" id="deco"></div>
 
-      <!-- 可爱的葡萄酸奶图标 -->
       <div class="icon-wrap">
         <svg class="cup-icon" viewBox="0 0 140 140" aria-hidden="true">
           <defs>
@@ -594,14 +590,13 @@ body{
 (function(){
   'use strict';
 
-  /* ================= 基础工具 ================= */
   const $ = s => document.querySelector(s);
   const rand = (a,b) => a + Math.random()*(b-a);
   const mix = (a,b,t) => a.map((v,i)=>Math.round(v+(b[i]-v)*t));
   const rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
 
   /* ======================================================
-     🎧 解压音效引擎（Web Audio 合成，无需外部文件）
+     🎧 解压音效引擎
      ====================================================== */
   const SFX = (function(){
     let ctx = null;
@@ -798,7 +793,8 @@ body{
   const game      = $('#game');
   const stage     = $('#stage');
   const hint      = $('#hint');
-  const vine      = $('#vine');
+  const vineLeft  = $('#vineLeft');
+  const vineRight = $('#vineRight');
   const cupWrap   = $('#cupWrap');
   const cup       = $('#cup');
   const liquid    = $('#liquid');
@@ -810,7 +806,6 @@ body{
   const progressBar  = $('#progressBar');
   const progressFill = $('#progressFill');
   const soundBtn  = $('#soundBtn');
-
   const deco      = $('#deco');
   const cardText  = $('#cardText');
   const finalHeart= $('#finalHeart');
@@ -834,7 +829,7 @@ body{
     return {
       phase:'pick',
       picked:0,
-      total:16,          /* 两串，每串8颗（2-3-2-1），共16颗 */
+      total:16,           /* 两串 × 8 颗 */
       mash:0,
       pour:0,
       pourDone:false,
@@ -846,37 +841,22 @@ body{
     };
   }
 
-  /* 🆕 两串葡萄，每串按 2-3-2-1 排列，对称分布于两侧
-     x 用 calc 百分比定位，自适应屏幕宽度
-     葡萄直径 32px，left = 中心 - 16px */
-  const GRAPE_LAYOUT = [
-    /* ===== 左串：中心 25% ===== */
-    // 第1层（2颗）
-    { x:'calc(20% - 16px)', y:0   },
-    { x:'calc(30% - 16px)', y:0   },
-    // 第2层（3颗）
-    { x:'calc(15% - 16px)', y:36  },
-    { x:'calc(25% - 16px)', y:36  },
-    { x:'calc(35% - 16px)', y:36  },
-    // 第3层（2颗）
-    { x:'calc(20% - 16px)', y:72  },
-    { x:'calc(30% - 16px)', y:72  },
-    // 第4层（1颗）
-    { x:'calc(25% - 16px)', y:108 },
-
-    /* ===== 右串：中心 75% ===== */
-    // 第1层（2颗）
-    { x:'calc(70% - 16px)', y:0   },
-    { x:'calc(80% - 16px)', y:0   },
-    // 第2层（3颗）
-    { x:'calc(65% - 16px)', y:36  },
-    { x:'calc(75% - 16px)', y:36  },
-    { x:'calc(85% - 16px)', y:36  },
-    // 第3层（2颗）
-    { x:'calc(70% - 16px)', y:72  },
-    { x:'calc(80% - 16px)', y:72  },
-    // 第4层（1颗）
-    { x:'calc(75% - 16px)', y:108 }
+  /* 🆕 每串葡萄的模板：紧凑排列 2-3-2-1
+     dx、dy 为相对葡萄串原点的偏移（px）
+     葡萄直径 32px，水平间距 22px，垂直间距 24px */
+  const GRAPE_TEMPLATE = [
+    /* 第1层（2颗） */
+    {dx:-11, dy:0},
+    {dx: 11, dy:0},
+    /* 第2层（3颗） */
+    {dx:-22, dy:24},
+    {dx:  0, dy:24},
+    {dx: 22, dy:24},
+    /* 第3层（2颗） */
+    {dx:-11, dy:48},
+    {dx: 11, dy:48},
+    /* 第4层（1颗） */
+    {dx:  0, dy:72}
   ];
 
   /* ================= 液体控制 ================= */
@@ -925,8 +905,8 @@ body{
 
   /* ================= 两片叶子分别飘落 ================= */
   function dropLeaf(){
-    const l1 = vine.querySelector('.leaf-1');
-    const l2 = vine.querySelector('.leaf-2');
+    const l1 = vineLeft.querySelector('.leaf-1');
+    const l2 = vineRight.querySelector('.leaf-2');
     if(l1 && !l1.classList.contains('falling')) l1.classList.add('falling');
     if(l2 && !l2.classList.contains('falling')) l2.classList.add('falling');
   }
@@ -951,18 +931,35 @@ body{
     state.phase = 'pick';
     hint.textContent = '把葡萄一颗颗丢进杯子里吧～';
 
-    GRAPE_LAYOUT.forEach((p, i) => {
-      const g = document.createElement('div');
-      g.className = 'grape';
-      g.style.left = p.x;
-      g.style.top  = p.y + 'px';
-      // 每颗葡萄浮动错开
-      g.style.animationDelay = (i * 0.18) + 's';
-      g.addEventListener('click', function onPick(){
-        g.removeEventListener('click', onPick);
-        pickGrape(g);
+    /* 为左右两串分别生成葡萄
+       注意：从底层（最下）往顶层添加，让上层葡萄盖住下层，形成葡萄串的层次感 */
+    const layers = [3, 2, 1, 0];  /* 先加第4层，再加第3、2、1层 */
+    let idx = 0;
+
+    [vineLeft, vineRight].forEach(vineEl => {
+      layers.forEach(layer => {
+        GRAPE_TEMPLATE.forEach((g, i) => {
+          // 判断该模板项属于哪一层
+          const layerOf =
+            (i === 0 || i === 1) ? 0 :
+            (i >= 2 && i <= 4)  ? 1 :
+            (i === 5 || i === 6) ? 2 : 3;
+
+          if(layerOf !== layer) return;
+
+          const el = document.createElement('div');
+          el.className = 'grape';
+          el.style.left = (g.dx - 16) + 'px';
+          el.style.top  = g.dy + 'px';
+          el.style.animationDelay = (idx * 0.14).toFixed(2) + 's';
+          idx++;
+          el.addEventListener('click', function onPick(){
+            el.removeEventListener('click', onPick);
+            pickGrape(el);
+          });
+          vineEl.appendChild(el);
+        });
       });
-      vine.appendChild(g);
     });
   }
 
@@ -1355,7 +1352,9 @@ body{
     SFX.pourStop();
 
     /* 重建两片叶子 */
-    vine.innerHTML = '<div class="leaf leaf-1"></div><div class="leaf leaf-2"></div>';
+    vineLeft.innerHTML  = '<div class="leaf leaf-1"></div>';
+    vineRight.innerHTML = '<div class="leaf leaf-2"></div>';
+
     cup.querySelectorAll('.drop').forEach(el => el.remove());
     game.querySelectorAll('.confetti').forEach(el => el.remove());
     deco.innerHTML = '';
@@ -1393,7 +1392,6 @@ body{
     if(on) SFX.click();
   });
 
-  /* 首次交互时唤醒音频上下文 */
   function wakeAudio(){
     SFX.resume();
     window.removeEventListener('pointerdown', wakeAudio);
