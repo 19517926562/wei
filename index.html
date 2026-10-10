@@ -82,31 +82,41 @@ body{
   border-radius:99px;
 }
 
-/* ========== 🆕 葡萄串（两串，紧凑） ========== */
+/* ========== 🆕 葡萄串（两串，各带一片叶子） ========== */
 .vine{
-  position:absolute;left:3%;top:4%;
+  position:absolute;left:3%;top:6%;
   width:150px;height:230px;
   transition:opacity .4s,transform .4s;
 }
 .leaf{
-  position:absolute;left:52px;top:-20px;
+  position:absolute;
   width:38px;height:26px;
   background:linear-gradient(140deg,#a8eb7c,#5fbf3f);
   border-radius:0 100% 0 100%;
-  transform:rotate(-20deg);
   box-shadow:0 3px 6px rgba(70,150,40,.25);
   transform-origin:30% 50%;
   will-change:transform,opacity;
 }
+/* 🆕 第一串的叶子（左侧） */
+.leaf-1{
+  left:8px; top:-22px;
+  transform:rotate(-30deg);
+}
+/* 🆕 第二串的叶子（右侧） */
+.leaf-2{
+  left:58px; top:-22px;
+  transform:rotate(-12deg);
+}
+/* 叶子飘落动画 */
 .leaf.falling{
   animation:leafFall 2.4s cubic-bezier(.4,.05,.6,1) forwards;
 }
 @keyframes leafFall{
-  0%   {transform:rotate(-20deg) translate(0,0);       opacity:1;}
-  22%  {transform:rotate(25deg)  translate(-8px,60px); opacity:.96;}
-  48%  {transform:rotate(-25deg) translate(4px,140px); opacity:.78;}
-  74%  {transform:rotate(35deg)  translate(-14px,220px); opacity:.42;}
-  100% {transform:rotate(10deg)  translate(8px,300px); opacity:0;}
+  0%   {transform:rotate(-25deg) translate(0,0);        opacity:1;}
+  22%  {transform:rotate(25deg)  translate(-8px,60px);  opacity:.96;}
+  48%  {transform:rotate(-25deg) translate(4px,140px);  opacity:.78;}
+  74%  {transform:rotate(35deg)  translate(-14px,220px);opacity:.42;}
+  100% {transform:rotate(10deg)  translate(8px,300px);  opacity:0;}
 }
 
 .grape{
@@ -320,17 +330,17 @@ body{
   50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
 }
 
-/* ---------- 🆕 结尾弹出的可爱爱心（带小猫） ---------- */
+/* ---------- 🆕 结尾弹出的爱心（简约粉嫩风格，与背景爱心一致） ---------- */
 .final-heart{
   position:absolute;
-  top:10px; right:14px;
-  width:56px; height:56px;
+  top:14px; right:16px;
+  width:52px; height:52px;
   opacity:0;
   transform:scale(0) rotate(-25deg);
   transition:opacity .3s, transform .55s cubic-bezier(.34,1.56,.64,1);
   pointer-events:none;
   z-index:2;
-  filter:drop-shadow(0 4px 8px rgba(255,120,180,.45));
+  filter:drop-shadow(0 4px 8px rgba(255,120,180,.4));
 }
 .final-heart.show{
   opacity:1;
@@ -367,7 +377,7 @@ body{
   50%    {transform:rotate(3deg);}
 }
 
-/* ---------- 🆕 逐字输出的文字（萌萌字体） ---------- */
+/* ---------- 逐字输出的文字（萌萌字体） ---------- */
 .card-text{
   position:relative;z-index:1;
   font-family:"ZCOOL KuaiLe","Comic Sans MS",cursive,sans-serif;
@@ -439,9 +449,10 @@ body{
   <div class="stage" id="stage">
     <div class="progress" id="progressBar"><i id="progressFill"></i></div>
 
-    <!-- 葡萄串 -->
+    <!-- 🆕 葡萄串：两串，各带一片叶子 -->
     <div class="vine" id="vine">
-      <div class="leaf"></div>
+      <div class="leaf leaf-1"></div>
+      <div class="leaf leaf-2"></div>
     </div>
 
     <!-- 杯子 + 工具 -->
@@ -468,39 +479,13 @@ body{
   <div class="modal" id="modal">
     <div class="card">
 
-      <!-- 🆕 结尾弹出的可爱爱心（参考图片：粉色爱心+小猫） -->
+      <!-- 🆕 结尾弹出的爱心（简约粉嫩，与背景爱心同款） -->
       <div class="final-heart" id="finalHeart">
-        <svg viewBox="0 0 100 100" width="100%" height="100%">
-          <defs>
-            <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ffb6d9"/>
-              <stop offset="100%" stop-color="#ff7eb3"/>
-            </linearGradient>
-          </defs>
-          <!-- 爱心主体 -->
-          <path d="M50 82 C50 82 15 55 15 35 C15 18 32 12 50 28 C68 12 85 18 85 35 C85 55 50 82 50 82 Z"
-                fill="url(#heartGrad)" stroke="#d45d9a" stroke-width="4" stroke-linejoin="round"/>
-          <!-- 左侧小手 -->
-          <circle cx="22" cy="38" r="8" fill="#ffffff" stroke="#d45d9a" stroke-width="3"/>
-          <circle cx="18" cy="34" r="4" fill="#ffffff" stroke="#d45d9a" stroke-width="2"/>
-          <!-- 右侧小猫头 -->
-          <g transform="translate(60, 25)">
-            <!-- 猫耳 -->
-            <polygon points="0,5 -5,-12 8,-5" fill="#f9d8b8" stroke="#d45d9a" stroke-width="3" stroke-linejoin="round"/>
-            <polygon points="22,5 27,-12 14,-5" fill="#f9d8b8" stroke="#d45d9a" stroke-width="3" stroke-linejoin="round"/>
-            <!-- 猫脸 -->
-            <circle cx="11" cy="10" r="13" fill="#ffffff" stroke="#d45d9a" stroke-width="3"/>
-            <!-- 猫眼 -->
-            <circle cx="6" cy="8" r="2" fill="#333"/>
-            <circle cx="16" cy="8" r="2" fill="#333"/>
-            <!-- 猫腮红 -->
-            <ellipse cx="3" cy="13" rx="3" ry="2" fill="#ffb6d9" opacity=".8"/>
-            <ellipse cx="19" cy="13" rx="3" ry="2" fill="#ffb6d9" opacity=".8"/>
-            <!-- 猫鼻子 -->
-            <path d="M9 12 L11 14 L13 12" fill="none" stroke="#333" stroke-width="1.5"/>
-          </g>
-          <!-- 爱心高光 -->
-          <ellipse cx="35" cy="35" rx="6" ry="10" fill="#ffffff" opacity=".5" transform="rotate(-30 35 35)"/>
+        <svg viewBox="0 0 40 40" width="100%" height="100%">
+          <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
+                fill="#ffb6d9" stroke="#d45d9a" stroke-width="3" stroke-linejoin="round"/>
+          <ellipse cx="14" cy="14" rx="2.5" ry="4" fill="#fff" opacity=".6"
+                   transform="rotate(-30 14 14)"/>
         </svg>
       </div>
 
@@ -718,18 +703,16 @@ body{
         pourNode = null;
       },
 
-      /* 🆕 搅拌：更温柔，去掉嘈杂的沙沙声，改用柔和的正弦波组合 */
+      /* 搅拌：温柔，间隔长，不嘈杂 */
       stir(){
         if(!enabled) return;
         const now = performance.now();
-        if(now - lastStir < 180) return; // 间隔拉长，避免密集
+        if(now - lastStir < 180) return;
         lastStir = now;
-        
-        // 非常轻柔的低频"噜噜"声
+
         const f = rand(220, 280);
         blip(f, 0.12, 'sine', 0.015, f * 1.2);
-        
-        // 叠加一个更低沉的气泡音
+
         setTimeout(() => {
           if(!enabled) return;
           blip(f * 0.8, 0.1, 'sine', 0.01, f * 1.1);
@@ -824,7 +807,7 @@ body{
     return {
       phase:'pick',
       picked:0,
-      total:14,          /* 🆕 两串葡萄，每串7颗，共14颗 */
+      total:14,          /* 两串葡萄，每串7颗，共14颗 */
       mash:0,
       pour:0,
       pourDone:false,
@@ -836,7 +819,7 @@ body{
     };
   }
 
-  /* 🆕 两串葡萄的排列（每串7颗，倒三角形） */
+  /* 两串葡萄的排列（每串7颗，倒三角形） */
   const GRAPE_POS = [
     /* 第一串：左侧 */
     [18, 0], [8, 35], [28, 35], [18, 70], [4, 70], [32, 70], [18, 105],
@@ -888,11 +871,13 @@ body{
     }
   }
 
-  /* ================= 叶子自然飘落 ================= */
+  /* ================= 🆕 两片叶子一起自然飘落 ================= */
   function dropLeaf(){
-    const leaf = vine.querySelector('.leaf');
-    if(!leaf || leaf.classList.contains('falling')) return;
-    leaf.classList.add('falling');
+    const leaves = vine.querySelectorAll('.leaf');
+    leaves.forEach(leaf => {
+      if(leaf.classList.contains('falling')) return;
+      leaf.classList.add('falling');
+    });
   }
 
   /* ================= 把杯子移到屏幕中间 ================= */
@@ -1196,7 +1181,7 @@ body{
   function buildDeco(){
     deco.innerHTML = '';
 
-    /* 🆕 用可爱的 SVG 小爱心替代 emoji，风格更统一 */
+    /* 简约粉嫩小爱心（SVG，风格统一） */
     const heartSVG = `
       <svg viewBox="0 0 40 40" width="100%" height="100%">
         <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
@@ -1318,7 +1303,8 @@ body{
     clearTimeout(openTimer);
     SFX.pourStop();
 
-    vine.innerHTML = '<div class="leaf"></div>';
+    /* 🆕 重置时重新生成两片叶子 */
+    vine.innerHTML = '<div class="leaf leaf-1"></div><div class="leaf leaf-2"></div>';
     cup.querySelectorAll('.drop').forEach(el => el.remove());
     game.querySelectorAll('.confetti').forEach(el => el.remove());
     deco.innerHTML = '';
