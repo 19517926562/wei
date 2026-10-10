@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>🍇 葡萄酸奶 DIY</title>
+<!-- 引入可爱字体 -->
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
 :root{
   --grape:#9b5de5;
@@ -14,7 +16,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;margin:0;}
 body{
-  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  font-family:"ZCOOL KuaiLe","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
   background:
     radial-gradient(circle at 15% 12%, #ffe9f5 0%, transparent 55%),
     radial-gradient(circle at 88% 8%, #e6f0ff 0%, transparent 50%),
@@ -80,10 +82,10 @@ body{
   border-radius:99px;
 }
 
-/* ========== 葡萄串（9 颗） ========== */
+/* ========== 🆕 葡萄串（两串，紧凑） ========== */
 .vine{
-  position:absolute;left:7%;top:8%;
-  width:120px;height:205px;
+  position:absolute;left:3%;top:4%;
+  width:150px;height:230px;
   transition:opacity .4s,transform .4s;
 }
 .leaf{
@@ -96,7 +98,6 @@ body{
   transform-origin:30% 50%;
   will-change:transform,opacity;
 }
-/* 叶子飘落动画 */
 .leaf.falling{
   animation:leafFall 2.4s cubic-bezier(.4,.05,.6,1) forwards;
 }
@@ -109,7 +110,7 @@ body{
 }
 
 .grape{
-  position:absolute;width:36px;height:36px;border-radius:50%;
+  position:absolute;width:30px;height:30px;border-radius:50%;
   background:radial-gradient(circle at 32% 26%,#dcb0ff 0%,#a86ae0 45%,#7d3fc0 100%);
   box-shadow:
     0 4px 10px rgba(140,80,200,.35),
@@ -120,7 +121,7 @@ body{
   will-change:transform;
 }
 .grape::after{
-  content:'';position:absolute;left:8px;top:7px;width:9px;height:6px;
+  content:'';position:absolute;left:7px;top:6px;width:8px;height:5px;
   border-radius:50%;background:rgba(255,255,255,.78);
   transform:rotate(-25deg);
 }
@@ -157,7 +158,6 @@ body{
   cursor:pointer;
 }
 
-/* 液体 */
 .liquid{
   position:absolute;left:0;right:0;bottom:0;height:0%;
   background:#9b5de5;
@@ -170,7 +170,6 @@ body{
   border-radius:99px;background:rgba(255,255,255,.35);
 }
 
-/* 漩涡 */
 .swirl{
   position:absolute;inset:-20%;z-index:2;opacity:0;
   background:conic-gradient(from 0deg,
@@ -184,7 +183,6 @@ body{
   pointer-events:none;
 }
 
-/* 杯子的脸 */
 .face{position:absolute;inset:0;z-index:3;pointer-events:none;}
 .face i{
   position:absolute;top:62px;width:10px;height:12px;border-radius:50%;
@@ -294,7 +292,7 @@ body{
 }
 .modal.show .card{transform:scale(1) translateY(0);}
 
-/* ---------- 弹窗内装饰层（心心 + 彩带） ---------- */
+/* ---------- 弹窗内装饰层 ---------- */
 .deco{
   position:absolute;inset:0;z-index:0;
   pointer-events:none;overflow:hidden;border-radius:32px;
@@ -322,11 +320,11 @@ body{
   50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
 }
 
-/* ---------- 🆕 结尾弹出的爱心（在右上角，不遮文字） ---------- */
+/* ---------- 🆕 结尾弹出的可爱爱心（带小猫） ---------- */
 .final-heart{
   position:absolute;
-  top:14px; right:16px;
-  font-size:30px; line-height:1;
+  top:10px; right:14px;
+  width:56px; height:56px;
   opacity:0;
   transform:scale(0) rotate(-25deg);
   transition:opacity .3s, transform .55s cubic-bezier(.34,1.56,.64,1);
@@ -341,7 +339,7 @@ body{
 }
 @keyframes finalHeartPulse{
   0%,100%{transform:scale(1) rotate(0deg);}
-  50%    {transform:scale(1.14) rotate(4deg);}
+  50%    {transform:scale(1.12) rotate(3deg);}
 }
 
 /* ---------- 图标：可爱葡萄酸奶 ---------- */
@@ -369,15 +367,16 @@ body{
   50%    {transform:rotate(3deg);}
 }
 
-/* ---------- 逐字输出的文字 ---------- */
+/* ---------- 🆕 逐字输出的文字（萌萌字体） ---------- */
 .card-text{
   position:relative;z-index:1;
-  font-size:20px;
+  font-family:"ZCOOL KuaiLe","Comic Sans MS",cursive,sans-serif;
+  font-size:21px;
   line-height:1.6;
   font-weight:800;
   margin:14px 0 20px;
   color:#6b4a8f;
-  letter-spacing:1px;
+  letter-spacing:1.5px;
   min-height:5.2em;
 }
 .card-text .line{
@@ -406,7 +405,8 @@ body{
   padding:13px 30px;border-radius:99px;
   background:linear-gradient(135deg,#ffb3d9,#b06ad3);
   color:#fff;font-size:15px;font-weight:800;
-  font-family:inherit;cursor:pointer;
+  font-family:"ZCOOL KuaiLe","PingFang SC",sans-serif;
+  cursor:pointer;
   box-shadow:0 8px 20px rgba(176,106,211,.42);
   opacity:0;transform:translateY(10px) scale(.9);
   pointer-events:none;
@@ -468,8 +468,41 @@ body{
   <div class="modal" id="modal">
     <div class="card">
 
-      <!-- 🆕 结尾弹出的爱心（右上角，不遮文字） -->
-      <div class="final-heart" id="finalHeart">💗</div>
+      <!-- 🆕 结尾弹出的可爱爱心（参考图片：粉色爱心+小猫） -->
+      <div class="final-heart" id="finalHeart">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          <defs>
+            <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffb6d9"/>
+              <stop offset="100%" stop-color="#ff7eb3"/>
+            </linearGradient>
+          </defs>
+          <!-- 爱心主体 -->
+          <path d="M50 82 C50 82 15 55 15 35 C15 18 32 12 50 28 C68 12 85 18 85 35 C85 55 50 82 50 82 Z"
+                fill="url(#heartGrad)" stroke="#d45d9a" stroke-width="4" stroke-linejoin="round"/>
+          <!-- 左侧小手 -->
+          <circle cx="22" cy="38" r="8" fill="#ffffff" stroke="#d45d9a" stroke-width="3"/>
+          <circle cx="18" cy="34" r="4" fill="#ffffff" stroke="#d45d9a" stroke-width="2"/>
+          <!-- 右侧小猫头 -->
+          <g transform="translate(60, 25)">
+            <!-- 猫耳 -->
+            <polygon points="0,5 -5,-12 8,-5" fill="#f9d8b8" stroke="#d45d9a" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="22,5 27,-12 14,-5" fill="#f9d8b8" stroke="#d45d9a" stroke-width="3" stroke-linejoin="round"/>
+            <!-- 猫脸 -->
+            <circle cx="11" cy="10" r="13" fill="#ffffff" stroke="#d45d9a" stroke-width="3"/>
+            <!-- 猫眼 -->
+            <circle cx="6" cy="8" r="2" fill="#333"/>
+            <circle cx="16" cy="8" r="2" fill="#333"/>
+            <!-- 猫腮红 -->
+            <ellipse cx="3" cy="13" rx="3" ry="2" fill="#ffb6d9" opacity=".8"/>
+            <ellipse cx="19" cy="13" rx="3" ry="2" fill="#ffb6d9" opacity=".8"/>
+            <!-- 猫鼻子 -->
+            <path d="M9 12 L11 14 L13 12" fill="none" stroke="#333" stroke-width="1.5"/>
+          </g>
+          <!-- 爱心高光 -->
+          <ellipse cx="35" cy="35" rx="6" ry="10" fill="#ffffff" opacity=".5" transform="rotate(-30 35 35)"/>
+        </svg>
+      </div>
 
       <!-- 会动的心心 / 彩带装饰 -->
       <div class="deco" id="deco"></div>
@@ -624,21 +657,16 @@ body{
     }
 
     return {
-      /* 🆕 摘葡萄：唯一保留的声音，柔柔糯糯的"啵" */
       pick(){
         const base = rand(680, 760);
         blip(base, 0.14, 'sine', 0.072, base * 1.55);
       },
 
-      /* 葡萄落杯：不再播放额外音效（去掉） */
-
-      /* 🆕 捣碎：更轻柔的"噗"，音量再降一点 */
       mash(){
         blip(rand(180,210), 0.18, 'sine', 0.045, 120);
         noiseHit(0.09, 240, 0.55, 0.011, 'lowpass');
       },
 
-      /* 倒酸奶：柔和低频"咕嘟"，不刺耳 */
       pourStart(){
         if(!enabled) return;
         const c = getCtx(); if(!c) return;
@@ -690,18 +718,24 @@ body{
         pourNode = null;
       },
 
-      /* 🆕 搅拌：换成圆润轻柔的"噜噜"声 */
+      /* 🆕 搅拌：更温柔，去掉嘈杂的沙沙声，改用柔和的正弦波组合 */
       stir(){
         if(!enabled) return;
         const now = performance.now();
-        if(now - lastStir < 155) return;
+        if(now - lastStir < 180) return; // 间隔拉长，避免密集
         lastStir = now;
-        const f = rand(300, 380);
-        blip(f, 0.08, 'triangle', 0.024, f * 1.45);
-        noiseHit(0.06, 850, 0.7, 0.009, 'lowpass');
+        
+        // 非常轻柔的低频"噜噜"声
+        const f = rand(220, 280);
+        blip(f, 0.12, 'sine', 0.015, f * 1.2);
+        
+        // 叠加一个更低沉的气泡音
+        setTimeout(() => {
+          if(!enabled) return;
+          blip(f * 0.8, 0.1, 'sine', 0.01, f * 1.1);
+        }, 40);
       },
 
-      /* 完成：上行琶音 + 闪光 */
       finish(){
         if(!enabled) return;
         const notes = [523.25, 659.25, 783.99, 1046.50];
@@ -716,7 +750,6 @@ body{
         }, 380);
       },
 
-      /* 🆕 打字：Q弹的"啵"声（每个字） */
       type(){
         if(!enabled) return;
         const f = rand(720, 880);
@@ -728,7 +761,6 @@ body{
         }, 22);
       },
 
-      /* 🆕 爱心弹出：圆润的小泡泡音 */
       heartPop(){
         if(!enabled) return;
         const f = 620;
@@ -784,7 +816,6 @@ body{
   let pouring = false;
   let cupCentered = false;
 
-  /* 🆕 新文案 */
   const CARD_LINES = ['宝宝', '晚饭少吃点o', '我请你喝酸奶'];
   let typeTimer = null;
   let openTimer = null;
@@ -793,7 +824,7 @@ body{
     return {
       phase:'pick',
       picked:0,
-      total:9,          /* 🆕 9 颗葡萄 */
+      total:14,          /* 🆕 两串葡萄，每串7颗，共14颗 */
       mash:0,
       pour:0,
       pourDone:false,
@@ -805,13 +836,12 @@ body{
     };
   }
 
-  /* 🆕 9 颗葡萄的排列位置 */
+  /* 🆕 两串葡萄的排列（每串7颗，倒三角形） */
   const GRAPE_POS = [
-    [42, 0],
-    [24, 40], [60, 40],
-    [6, 80], [42, 80], [78, 80],
-    [24, 120], [60, 120],
-    [42, 160]
+    /* 第一串：左侧 */
+    [18, 0], [8, 35], [28, 35], [18, 70], [4, 70], [32, 70], [18, 105],
+    /* 第二串：右侧 */
+    [68, 0], [58, 35], [78, 35], [68, 70], [54, 70], [82, 70], [68, 105]
   ];
 
   /* ================= 液体控制 ================= */
@@ -890,7 +920,7 @@ body{
       g.className = 'grape';
       g.style.left = p[0] + 'px';
       g.style.top  = p[1] + 'px';
-      g.style.animationDelay = (i * 0.22) + 's';
+      g.style.animationDelay = (i * 0.15) + 's';
       g.addEventListener('click', function onPick(){
         g.removeEventListener('click', onPick);
         pickGrape(g);
@@ -903,7 +933,6 @@ body{
     el.style.pointerEvents = 'none';
     el.style.animation = 'none';
 
-    /* 🆕 唯一保留的音效：柔柔的"啵" */
     SFX.pick();
 
     const gRect = el.getBoundingClientRect();
@@ -919,10 +948,9 @@ body{
     ], {duration:660, easing:'cubic-bezier(.5,-0.15,.55,1)', fill:'forwards'});
     fly.onfinish = () => el.remove();
 
-    /* 🆕 落杯只有动作 + 水花，不再播放音效 */
     setTimeout(() => {
       bumpCup(0.85);
-      splash(6, '#cf9df2');
+      splash(5, '#cf9df2');
     }, 420);
 
     state.picked++;
@@ -931,7 +959,6 @@ body{
     const col = mix([205,175,240], C_JUICE, t);
     setLiquid(h, rgb(col));
 
-    /* 最后一颗葡萄：叶子飘落 + 杯子移到中间 */
     if(state.picked >= state.total){
       setTimeout(() => {
         dropLeaf();
@@ -941,7 +968,7 @@ body{
     }
   }
 
-  /* ================= 阶段 2：捣碎（更缓慢、更柔和） ================= */
+  /* ================= 阶段 2：捣碎 ================= */
   function startMash(){
     state.phase = 'mash';
     state.mash = 0;
@@ -961,7 +988,6 @@ body{
     state.mash = Math.min(100, state.mash + 9);
     progressFill.style.width = state.mash + '%';
 
-    /* 🆕 动画更慢、更柔和，幅度更小 */
     muddler.animate([
       {transform:'translateY(0) rotate(0deg) scale(1)'},
       {transform:'translateY(24px) rotate(1.5deg) scale(1)'},
@@ -1170,14 +1196,22 @@ body{
   function buildDeco(){
     deco.innerHTML = '';
 
-    const hearts = ['💗','💕','💜','🩷','💖','✨','🎀','🍇'];
+    /* 🆕 用可爱的 SVG 小爱心替代 emoji，风格更统一 */
+    const heartSVG = `
+      <svg viewBox="0 0 40 40" width="100%" height="100%">
+        <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
+              fill="#ffb6d9" stroke="#d45d9a" stroke-width="2.5"/>
+        <ellipse cx="14" cy="14" rx="2.5" ry="4" fill="#fff" opacity=".6" transform="rotate(-30 14 14)"/>
+      </svg>
+    `;
     for(let i=0;i<8;i++){
       const s = document.createElement('span');
       s.className = 'heart';
-      s.textContent = hearts[i % hearts.length];
+      s.innerHTML = heartSVG;
       s.style.left = rand(2, 90) + '%';
       s.style.top  = rand(2, 88) + '%';
-      s.style.fontSize = rand(12, 21) + 'px';
+      s.style.width = rand(14, 24) + 'px';
+      s.style.height = s.style.width;
       s.style.animationDelay = (-rand(0, 3)).toFixed(2) + 's';
       s.style.animationDuration = rand(2.4, 4.6).toFixed(2) + 's';
       deco.appendChild(s);
@@ -1203,7 +1237,7 @@ body{
   function typeText(){
     clearTimeout(typeTimer);
     cardText.innerHTML = '';
-    finalHeart.classList.remove('show');   /* 🆕 重置爱心 */
+    finalHeart.classList.remove('show');
 
     const lineEls = CARD_LINES.map(() => {
       const d = document.createElement('div');
@@ -1220,7 +1254,6 @@ body{
         lineEls.forEach(el => el.classList.remove('typing'));
         typeTimer = setTimeout(() => {
           againBtn.classList.add('show');
-          /* 🆕 最后冒出一个爱心 + 音效 */
           setTimeout(() => {
             finalHeart.classList.add('show');
             SFX.heartPop();
