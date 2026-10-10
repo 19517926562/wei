@@ -236,7 +236,9 @@ body{
   background:#fff;opacity:.95;pointer-events:none;z-index:6;
 }
 
-/* ========== 结果弹窗 ========== */
+/* ======================================================
+   结果弹窗
+   ====================================================== */
 .modal{
   position:absolute;inset:0;z-index:50;
   display:grid;place-items:center;
@@ -246,38 +248,128 @@ body{
   opacity:0;pointer-events:none;transition:opacity .35s;
 }
 .modal.show{opacity:1;pointer-events:auto;}
+
 .card{
-  width:min(300px,82%);
-  background:#fff;border-radius:30px;
-  padding:26px 22px 24px;text-align:center;
-  box-shadow:0 22px 56px rgba(110,60,160,.3);
+  position:relative;
+  width:min(310px,84%);
+  background:linear-gradient(180deg,#ffffff 0%,#fdf5ff 100%);
+  border-radius:32px;
+  padding:22px 20px 24px;
+  text-align:center;
+  box-shadow:
+    0 22px 56px rgba(110,60,160,.3),
+    inset 0 0 0 3px rgba(255,255,255,.9);
   transform:scale(.55) translateY(20px);
   transition:transform .55s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;                 /* 让装饰不会溢出圆角 */
 }
 .modal.show .card{transform:scale(1) translateY(0);}
-.card-emoji{
-  font-size:44px;line-height:1;
-  animation:emojiBounce 1.4s ease-in-out infinite;
+
+/* ---------- 弹窗内装饰层（心心 + 彩带） ---------- */
+.deco{
+  position:absolute;inset:0;z-index:0;
+  pointer-events:none;overflow:hidden;border-radius:32px;
 }
-@keyframes emojiBounce{
-  0%,100%{transform:translateY(0) scale(1);}
-  50%{transform:translateY(-7px) scale(1.06);}
+.heart{
+  position:absolute;
+  line-height:1;
+  opacity:.8;
+  filter:drop-shadow(0 2px 4px rgba(200,120,220,.3));
+  animation:heartFloat 3s ease-in-out infinite;
+  will-change:transform;
 }
+@keyframes heartFloat{
+  0%,100%{transform:translateY(0) scale(1) rotate(-8deg);opacity:.55;}
+  50%    {transform:translateY(-13px) scale(1.22) rotate(8deg);opacity:1;}
+}
+.ribbon{
+  position:absolute;
+  opacity:.85;
+  animation:ribbonFloat 4s ease-in-out infinite;
+  will-change:transform;
+}
+@keyframes ribbonFloat{
+  0%,100%{transform:translateY(0) rotate(0deg) scale(1);}
+  50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
+}
+
+/* ---------- 图标：可爱葡萄酸奶 ---------- */
+.icon-wrap{
+  position:relative;z-index:1;
+  display:inline-block;
+  animation:iconFloat 2.6s ease-in-out infinite;
+  will-change:transform;
+}
+@keyframes iconFloat{
+  0%,100%{transform:translateY(0) rotate(-1.5deg);}
+  50%    {transform:translateY(-7px) rotate(1.5deg);}
+}
+.cup-icon{
+  width:118px;height:118px;
+  display:block;
+  filter:drop-shadow(0 10px 16px rgba(176,106,211,.28));
+}
+/* 杯口的葡萄轻轻摇晃 */
+.grapeTop{
+  transform-origin:70px 46px;
+  animation:grapeSway 2.2s ease-in-out infinite;
+}
+@keyframes grapeSway{
+  0%,100%{transform:rotate(-3deg);}
+  50%    {transform:rotate(3deg);}
+}
+
+/* ---------- 逐字输出的文字 ---------- */
 .card-text{
-  font-size:19px;line-height:1.75;font-weight:800;
-  margin:16px 0 22px;color:#6b4a8f;letter-spacing:.5px;
+  position:relative;z-index:1;
+  font-size:20px;
+  line-height:1.6;
+  font-weight:800;
+  margin:14px 0 20px;
+  color:#6b4a8f;
+  letter-spacing:1px;
+  min-height:5.2em;
 }
+.card-text .line{
+  min-height:1.6em;
+  white-space:nowrap;
+}
+/* 打字光标 */
+.card-text .line.typing::after{
+  content:'';
+  display:inline-block;
+  width:2px;height:.95em;
+  margin-left:3px;
+  vertical-align:-.12em;
+  background:#b06ad3;
+  border-radius:2px;
+  animation:caretBlink .65s steps(1) infinite;
+}
+@keyframes caretBlink{
+  0%,49%{opacity:1;}
+  50%,100%{opacity:0;}
+}
+
+/* ---------- 按钮 ---------- */
 .btn{
-  border:none;padding:13px 30px;border-radius:99px;
+  position:relative;z-index:1;
+  border:none;
+  padding:13px 30px;border-radius:99px;
   background:linear-gradient(135deg,#ffb3d9,#b06ad3);
   color:#fff;font-size:15px;font-weight:800;
   font-family:inherit;cursor:pointer;
   box-shadow:0 8px 20px rgba(176,106,211,.42);
-  transition:transform .15s;
+  opacity:0;transform:translateY(10px) scale(.9);
+  pointer-events:none;
+  transition:opacity .4s, transform .45s cubic-bezier(.34,1.56,.64,1);
 }
-.btn:active{transform:scale(.93);}
+.btn.show{
+  opacity:1;transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.btn.show:active{transform:scale(.93);}
 
-/* 彩带 */
+/* 全屏彩带 */
 .confetti{
   position:absolute;top:-20px;pointer-events:none;z-index:40;
 }
@@ -320,11 +412,86 @@ body{
     </div>
   </div>
 
-  <!-- 结果弹窗 -->
+  <!-- ================= 结果弹窗 ================= -->
   <div class="modal" id="modal">
     <div class="card">
-      <div class="card-emoji">🥛🍇</div>
-      <p class="card-text">宝宝晚饭少吃一点，<br>我给你点杯酸奶～</p>
+
+      <!-- 会动的心心 / 彩带装饰 -->
+      <div class="deco" id="deco"></div>
+
+      <!-- 可爱的葡萄酸奶图标 -->
+      <div class="icon-wrap">
+        <svg class="cup-icon" viewBox="0 0 140 140" aria-hidden="true">
+          <defs>
+            <linearGradient id="cLiquid" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="#e6ccfa"/>
+              <stop offset="100%" stop-color="#a86ae0"/>
+            </linearGradient>
+            <linearGradient id="cCup" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="#ffffff"/>
+              <stop offset="100%" stop-color="#f6ecff"/>
+            </linearGradient>
+            <linearGradient id="cGrape" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%"  stop-color="#dcb0ff"/>
+              <stop offset="55%" stop-color="#a86ae0"/>
+              <stop offset="100%" stop-color="#7d3fc0"/>
+            </linearGradient>
+            <clipPath id="cClip">
+              <path d="M40 46 L100 46 L95 116 Q94 124 86 124 L54 124 Q46 124 45 116 Z"/>
+            </clipPath>
+          </defs>
+
+          <!-- 地面阴影 -->
+          <ellipse cx="70" cy="129" rx="33" ry="6.5" fill="#b06ad3" opacity=".16"/>
+
+          <!-- 杯身 -->
+          <path d="M40 46 L100 46 L95 116 Q94 124 86 124 L54 124 Q46 124 45 116 Z"
+                fill="url(#cCup)" stroke="#c9a8e8" stroke-width="3.5" stroke-linejoin="round"/>
+
+          <!-- 里面的葡萄酸奶 -->
+          <g clip-path="url(#cClip)">
+            <rect x="34" y="64" width="72" height="72" fill="url(#cLiquid)"/>
+            <ellipse cx="70" cy="64" rx="42" ry="8" fill="#f4e9ff" opacity=".92"/>
+            <!-- 果粒 -->
+            <circle cx="58" cy="80" r="4" fill="#8a4bc0" opacity=".35"/>
+            <circle cx="82" cy="94" r="3.4" fill="#8a4bc0" opacity=".3"/>
+            <circle cx="66" cy="108" r="4.2" fill="#8a4bc0" opacity=".28"/>
+          </g>
+
+          <!-- 杯口 -->
+          <ellipse cx="70" cy="46" rx="30" ry="7.5"
+                   fill="#ffffff" stroke="#c9a8e8" stroke-width="3.5"/>
+
+          <!-- 可爱的脸 -->
+          <circle cx="58" cy="80" r="3.6" fill="#5a3d7a"/>
+          <circle cx="82" cy="80" r="3.6" fill="#5a3d7a"/>
+          <path d="M63.5 90.5 Q70 97 76.5 90.5"
+                stroke="#5a3d7a" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="49" cy="88" rx="5.2" ry="3.4" fill="#ffb3d9" opacity=".75"/>
+          <ellipse cx="91" cy="88" rx="5.2" ry="3.4" fill="#ffb3d9" opacity=".75"/>
+
+          <!-- 杯口的葡萄 + 小叶子 -->
+          <g class="grapeTop">
+            <path d="M70 20 Q73 11 80 8"
+                  stroke="#7bc04a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M80 8 Q90 5 94 14 Q85 19 80 8 Z" fill="#8ed35c"/>
+            <circle cx="52" cy="35" r="9.5" fill="url(#cGrape)"/>
+            <circle cx="70" cy="29" r="10.5" fill="url(#cGrape)"/>
+            <circle cx="88" cy="35" r="9.5" fill="url(#cGrape)"/>
+            <circle cx="49" cy="32" r="2.6" fill="#fff" opacity=".7"/>
+            <circle cx="67" cy="25" r="3"   fill="#fff" opacity=".7"/>
+            <circle cx="85" cy="32" r="2.6" fill="#fff" opacity=".7"/>
+          </g>
+
+          <!-- 小爱心点缀 -->
+          <path d="M108 22 q4 -5 8 0 q-2 6 -8 10 q-6 -4 -8 -10 q4 -5 8 0 Z"
+                fill="#ff9ec7" opacity=".85"/>
+        </svg>
+      </div>
+
+      <!-- 逐字输出的文案（JS 填充） -->
+      <p class="card-text" id="cardText"></p>
+
       <button class="btn" id="againBtn">再来一杯 🍇</button>
     </div>
   </div>
@@ -357,6 +524,10 @@ body{
   const progressBar  = $('#progressBar');
   const progressFill = $('#progressFill');
 
+  /* 弹窗相关 */
+  const deco      = $('#deco');
+  const cardText  = $('#cardText');
+
   /* ================= 颜色 ================= */
   const C_JUICE   = [165,105,225];  // 葡萄汁
   const C_MASHED  = [118,52,178];   // 捣碎后的深紫
@@ -366,6 +537,11 @@ body{
   /* ================= 状态 ================= */
   let state;
   let pouring = false;
+
+  /* 弹窗状态 */
+  const CARD_LINES = ['宝宝', '晚饭少吃点o', '我给你点杯酸奶'];
+  let typeTimer = null;     // 逐字输出计时器
+  let openTimer = null;     // 打开后延迟打字计时器
 
   function newState(){
     return {
@@ -675,10 +851,11 @@ body{
 
     setTimeout(() => {
       modal.classList.add('show');
+      openCard();
     }, 620);
   }
 
-  /* ================= 彩带 ================= */
+  /* ================= 全屏彩带 ================= */
   function confetti(){
     const colors = ['#ffb3d9','#b06ad3','#ffe08a','#9be36d','#8fd3ff','#ff9ec7'];
     for(let i=0;i<44;i++){
@@ -706,6 +883,105 @@ body{
     }
   }
 
+  /* ======================================================
+     弹窗：装饰 + 逐字输出
+     ====================================================== */
+
+  /* 生成会动的心心和彩带 */
+  function buildDeco(){
+    deco.innerHTML = '';
+
+    // 心心 / 小装饰
+    const hearts = ['💗','💕','💜','🩷','💖','✨','🎀','🍇'];
+    for(let i=0;i<8;i++){
+      const s = document.createElement('span');
+      s.className = 'heart';
+      s.textContent = hearts[i % hearts.length];
+      s.style.left = rand(2, 90) + '%';
+      s.style.top  = rand(2, 88) + '%';
+      s.style.fontSize = rand(12, 21) + 'px';
+      s.style.animationDelay = (-rand(0, 3)).toFixed(2) + 's';
+      s.style.animationDuration = rand(2.4, 4.6).toFixed(2) + 's';
+      deco.appendChild(s);
+    }
+
+    // 彩带碎片
+    const colors = ['#ffb3d9','#b06ad3','#ffe08a','#9be36d','#8fd3ff','#ff9ec7','#ffd6a5'];
+    for(let i=0;i<16;i++){
+      const c = document.createElement('i');
+      c.className = 'ribbon';
+      c.style.left = rand(0, 100) + '%';
+      c.style.top  = rand(-6, 92) + '%';
+      c.style.background = colors[(Math.random()*colors.length)|0];
+      const w = rand(5, 10);
+      c.style.width  = w + 'px';
+      c.style.height = (w * rand(1.2, 2.2)).toFixed(1) + 'px';
+      c.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+      c.style.animationDelay = (-rand(0, 4)).toFixed(2) + 's';
+      c.style.animationDuration = rand(3, 6).toFixed(2) + 's';
+      deco.appendChild(c);
+    }
+  }
+
+  /* 逐字缓慢输出三行文案 */
+  function typeText(){
+    clearTimeout(typeTimer);
+    cardText.innerHTML = '';
+
+    // 建好三行容器
+    const lineEls = CARD_LINES.map(() => {
+      const d = document.createElement('div');
+      d.className = 'line';
+      cardText.appendChild(d);
+      return d;
+    });
+
+    let li = 0;   // 第几行
+    let ci = 0;   // 第几个字
+
+    function step(){
+      // 全部输出完成
+      if(li >= CARD_LINES.length){
+        lineEls.forEach(el => el.classList.remove('typing'));
+        // 文案显示完，按钮弹出来
+        typeTimer = setTimeout(() => {
+          againBtn.classList.add('show');
+        }, 320);
+        return;
+      }
+
+      const line = CARD_LINES[li];
+
+      if(ci < line.length){
+        lineEls[li].classList.add('typing');
+        lineEls[li].textContent += line[ci];
+        ci++;
+        typeTimer = setTimeout(step, 180);   // 每个字的间隔（缓慢）
+      }else{
+        // 这一行打完，去掉光标，停顿一下换行
+        lineEls[li].classList.remove('typing');
+        li++;
+        ci = 0;
+        typeTimer = setTimeout(step, 340);   // 换行停顿
+      }
+    }
+
+    step();
+  }
+
+  /* 打开卡片：重置 + 生成装饰 + 延迟打字 */
+  function openCard(){
+    clearTimeout(typeTimer);
+    clearTimeout(openTimer);
+
+    cardText.innerHTML = '';
+    againBtn.classList.remove('show');
+    buildDeco();
+
+    // 等卡片弹出动画走一点再开始打字
+    openTimer = setTimeout(typeText, 520);
+  }
+
   /* ================= 主循环 ================= */
   function tick(){
     // 倒酸奶
@@ -730,10 +1006,16 @@ body{
     window.removeEventListener('pointerdown', onStirMove);
     yogurt.removeEventListener('pointerdown', onPourDown);
 
+    // 清理计时器
+    clearTimeout(typeTimer);
+    clearTimeout(openTimer);
+
     // 清理 DOM
     vine.innerHTML = '<div class="leaf"></div>';
     cup.querySelectorAll('.drop').forEach(el => el.remove());
     game.querySelectorAll('.confetti').forEach(el => el.remove());
+    deco.innerHTML = '';
+    cardText.innerHTML = '';
 
     // 重置样式
     liquid.style.height = '0%';
@@ -746,6 +1028,7 @@ body{
     progressBar.classList.remove('show');
     progressFill.style.width = '0%';
     modal.classList.remove('show');
+    againBtn.classList.remove('show');
 
     pouring = false;
     state = newState();
