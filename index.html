@@ -82,57 +82,85 @@ body{
   border-radius:99px;
 }
 
-/* ========== 🆕 葡萄串（两串，各带一片叶子） ========== */
+/* ========== 🆕 葡萄串：卡通版，两串对称分布在杯子上方两侧 ========== */
 .vine{
-  position:absolute;left:3%;top:6%;
-  width:150px;height:230px;
-  transition:opacity .4s,transform .4s;
+  position:absolute;
+  left:0;top:6%;
+  width:100%;height:240px;
+  pointer-events:none;
+  transition:opacity .4s;
 }
+
+/* 卡通圆润叶子 */
 .leaf{
   position:absolute;
-  width:38px;height:26px;
-  background:linear-gradient(140deg,#a8eb7c,#5fbf3f);
+  width:42px;height:28px;
+  background:linear-gradient(140deg,#b5f08a,#6dc94a);
   border-radius:0 100% 0 100%;
-  box-shadow:0 3px 6px rgba(70,150,40,.25);
+  box-shadow:
+    0 3px 8px rgba(70,150,40,.28),
+    inset -3px -4px 6px rgba(70,150,40,.25),
+    inset 3px 3px 6px rgba(255,255,255,.4);
   transform-origin:30% 50%;
   will-change:transform,opacity;
 }
-/* 🆕 第一串的叶子（左侧） */
+/* 左串的叶子 */
 .leaf-1{
-  left:8px; top:-22px;
-  transform:rotate(-30deg);
+  left:calc(22% - 21px);
+  top:-28px;
+  transform:rotate(-28deg);
 }
-/* 🆕 第二串的叶子（右侧） */
+/* 右串的叶子 */
 .leaf-2{
-  left:58px; top:-22px;
+  left:calc(78% - 21px);
+  top:-28px;
   transform:rotate(-12deg);
 }
-/* 叶子飘落动画 */
-.leaf.falling{
-  animation:leafFall 2.4s cubic-bezier(.4,.05,.6,1) forwards;
+
+/* 🆕 左叶：向左下方飘落 */
+.leaf-1.falling{
+  animation:leafFallLeft 2.6s cubic-bezier(.4,.05,.6,1) forwards;
 }
-@keyframes leafFall{
-  0%   {transform:rotate(-25deg) translate(0,0);        opacity:1;}
-  22%  {transform:rotate(25deg)  translate(-8px,60px);  opacity:.96;}
-  48%  {transform:rotate(-25deg) translate(4px,140px);  opacity:.78;}
-  74%  {transform:rotate(35deg)  translate(-14px,220px);opacity:.42;}
-  100% {transform:rotate(10deg)  translate(8px,300px);  opacity:0;}
+@keyframes leafFallLeft{
+  0%   {transform:rotate(-28deg) translate(0,0) scale(1);        opacity:1;}
+  20%  {transform:rotate(20deg)  translate(-25px,55px) scale(1); opacity:.95;}
+  45%  {transform:rotate(-30deg) translate(-58px,128px) scale(.98); opacity:.75;}
+  70%  {transform:rotate(35deg)  translate(-38px,208px) scale(.95); opacity:.42;}
+  100% {transform:rotate(-10deg) translate(-72px,292px) scale(.9);  opacity:0;}
 }
 
+/* 🆕 右叶：向右下方飘落 */
+.leaf-2.falling{
+  animation:leafFallRight 2.8s cubic-bezier(.4,.05,.6,1) forwards;
+}
+@keyframes leafFallRight{
+  0%   {transform:rotate(-12deg) translate(0,0) scale(1);        opacity:1;}
+  22%  {transform:rotate(38deg)  translate(32px,62px) scale(1);  opacity:.96;}
+  48%  {transform:rotate(-22deg) translate(64px,132px) scale(.98); opacity:.78;}
+  72%  {transform:rotate(48deg)  translate(48px,218px) scale(.94); opacity:.42;}
+  100% {transform:rotate(18deg)  translate(88px,304px) scale(.9);  opacity:0;}
+}
+
+/* 卡通葡萄：圆润饱满，带高光和柔和阴影 */
 .grape{
-  position:absolute;width:30px;height:30px;border-radius:50%;
-  background:radial-gradient(circle at 32% 26%,#dcb0ff 0%,#a86ae0 45%,#7d3fc0 100%);
+  position:absolute;
+  width:32px;height:32px;border-radius:50%;
+  background:radial-gradient(circle at 32% 26%,#e0b8ff 0%,#a86ae0 48%,#7d3fc0 100%);
   box-shadow:
     0 4px 10px rgba(140,80,200,.35),
-    inset -4px -6px 10px rgba(90,40,140,.35),
-    inset 3px 4px 8px rgba(255,255,255,.35);
+    inset -4px -6px 10px rgba(90,40,140,.32),
+    inset 3px 4px 8px rgba(255,255,255,.4);
   cursor:pointer;
+  pointer-events:auto;
   animation:grapeFloat 2.6s ease-in-out infinite;
   will-change:transform;
 }
 .grape::after{
-  content:'';position:absolute;left:7px;top:6px;width:8px;height:5px;
-  border-radius:50%;background:rgba(255,255,255,.78);
+  content:'';
+  position:absolute;left:7px;top:6px;
+  width:9px;height:6px;
+  border-radius:50%;
+  background:rgba(255,255,255,.82);
   transform:rotate(-25deg);
 }
 .grape:active{filter:brightness(1.2);}
@@ -330,7 +358,7 @@ body{
   50%    {transform:translateY(-17px) rotate(200deg) scale(1.18);}
 }
 
-/* ---------- 🆕 结尾弹出的爱心（简约粉嫩风格，与背景爱心一致） ---------- */
+/* ---------- 结尾弹出的爱心（简约粉嫩） ---------- */
 .final-heart{
   position:absolute;
   top:14px; right:16px;
@@ -449,7 +477,7 @@ body{
   <div class="stage" id="stage">
     <div class="progress" id="progressBar"><i id="progressFill"></i></div>
 
-    <!-- 🆕 葡萄串：两串，各带一片叶子 -->
+    <!-- 葡萄串：两串对称，各带一片叶子 -->
     <div class="vine" id="vine">
       <div class="leaf leaf-1"></div>
       <div class="leaf leaf-2"></div>
@@ -479,7 +507,7 @@ body{
   <div class="modal" id="modal">
     <div class="card">
 
-      <!-- 🆕 结尾弹出的爱心（简约粉嫩，与背景爱心同款） -->
+      <!-- 结尾弹出的爱心 -->
       <div class="final-heart" id="finalHeart">
         <svg viewBox="0 0 40 40" width="100%" height="100%">
           <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
@@ -703,7 +731,6 @@ body{
         pourNode = null;
       },
 
-      /* 搅拌：温柔，间隔长，不嘈杂 */
       stir(){
         if(!enabled) return;
         const now = performance.now();
@@ -807,7 +834,7 @@ body{
     return {
       phase:'pick',
       picked:0,
-      total:14,          /* 两串葡萄，每串7颗，共14颗 */
+      total:16,          /* 两串，每串8颗（2-3-2-1），共16颗 */
       mash:0,
       pour:0,
       pourDone:false,
@@ -819,12 +846,37 @@ body{
     };
   }
 
-  /* 两串葡萄的排列（每串7颗，倒三角形） */
-  const GRAPE_POS = [
-    /* 第一串：左侧 */
-    [18, 0], [8, 35], [28, 35], [18, 70], [4, 70], [32, 70], [18, 105],
-    /* 第二串：右侧 */
-    [68, 0], [58, 35], [78, 35], [68, 70], [54, 70], [82, 70], [68, 105]
+  /* 🆕 两串葡萄，每串按 2-3-2-1 排列，对称分布于两侧
+     x 用 calc 百分比定位，自适应屏幕宽度
+     葡萄直径 32px，left = 中心 - 16px */
+  const GRAPE_LAYOUT = [
+    /* ===== 左串：中心 25% ===== */
+    // 第1层（2颗）
+    { x:'calc(20% - 16px)', y:0   },
+    { x:'calc(30% - 16px)', y:0   },
+    // 第2层（3颗）
+    { x:'calc(15% - 16px)', y:36  },
+    { x:'calc(25% - 16px)', y:36  },
+    { x:'calc(35% - 16px)', y:36  },
+    // 第3层（2颗）
+    { x:'calc(20% - 16px)', y:72  },
+    { x:'calc(30% - 16px)', y:72  },
+    // 第4层（1颗）
+    { x:'calc(25% - 16px)', y:108 },
+
+    /* ===== 右串：中心 75% ===== */
+    // 第1层（2颗）
+    { x:'calc(70% - 16px)', y:0   },
+    { x:'calc(80% - 16px)', y:0   },
+    // 第2层（3颗）
+    { x:'calc(65% - 16px)', y:36  },
+    { x:'calc(75% - 16px)', y:36  },
+    { x:'calc(85% - 16px)', y:36  },
+    // 第3层（2颗）
+    { x:'calc(70% - 16px)', y:72  },
+    { x:'calc(80% - 16px)', y:72  },
+    // 第4层（1颗）
+    { x:'calc(75% - 16px)', y:108 }
   ];
 
   /* ================= 液体控制 ================= */
@@ -871,13 +923,12 @@ body{
     }
   }
 
-  /* ================= 🆕 两片叶子一起自然飘落 ================= */
+  /* ================= 两片叶子分别飘落 ================= */
   function dropLeaf(){
-    const leaves = vine.querySelectorAll('.leaf');
-    leaves.forEach(leaf => {
-      if(leaf.classList.contains('falling')) return;
-      leaf.classList.add('falling');
-    });
+    const l1 = vine.querySelector('.leaf-1');
+    const l2 = vine.querySelector('.leaf-2');
+    if(l1 && !l1.classList.contains('falling')) l1.classList.add('falling');
+    if(l2 && !l2.classList.contains('falling')) l2.classList.add('falling');
   }
 
   /* ================= 把杯子移到屏幕中间 ================= */
@@ -900,12 +951,13 @@ body{
     state.phase = 'pick';
     hint.textContent = '把葡萄一颗颗丢进杯子里吧～';
 
-    GRAPE_POS.forEach((p, i) => {
+    GRAPE_LAYOUT.forEach((p, i) => {
       const g = document.createElement('div');
       g.className = 'grape';
-      g.style.left = p[0] + 'px';
-      g.style.top  = p[1] + 'px';
-      g.style.animationDelay = (i * 0.15) + 's';
+      g.style.left = p.x;
+      g.style.top  = p.y + 'px';
+      // 每颗葡萄浮动错开
+      g.style.animationDelay = (i * 0.18) + 's';
       g.addEventListener('click', function onPick(){
         g.removeEventListener('click', onPick);
         pickGrape(g);
@@ -1181,7 +1233,6 @@ body{
   function buildDeco(){
     deco.innerHTML = '';
 
-    /* 简约粉嫩小爱心（SVG，风格统一） */
     const heartSVG = `
       <svg viewBox="0 0 40 40" width="100%" height="100%">
         <path d="M20 34 C20 34 5 22 5 14 C5 7 12 4 20 11 C28 4 35 7 35 14 C35 22 20 34 20 34 Z"
@@ -1303,7 +1354,7 @@ body{
     clearTimeout(openTimer);
     SFX.pourStop();
 
-    /* 🆕 重置时重新生成两片叶子 */
+    /* 重建两片叶子 */
     vine.innerHTML = '<div class="leaf leaf-1"></div><div class="leaf leaf-2"></div>';
     cup.querySelectorAll('.drop').forEach(el => el.remove());
     game.querySelectorAll('.confetti').forEach(el => el.remove());
