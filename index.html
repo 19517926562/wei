@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>🍇 葡萄酸奶 DIY</title>
+<style>
+:root{
+  --grape:#9b5de5;
+  --grape-dark:#7b3fc4;
+  --pink:#ff9ec7;
+  --ink:#6b4a8f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  background:
+    radial-gradient(circle at 15% 12%, #ffe9f5 0%, transparent 55%),
+    radial-gradient(circle at 88% 8%, #e6f0ff 0%, transparent 50%),
+    radial-gradient(circle at 50% 105%, #e3fff4 0%, transparent 60%),
+    #fdfaff;
+  display:grid;place-items:center;
+  overflow:hidden;user-select:none;color:var(--ink);
+}
+
+/* ========== 布局 ========== */
+.game{
+  position:relative;
+  width:min(430px,100vw);
+  height:min(820px,100vh);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  touch-action:none;
+}
+
+/* ========== 顶部 ========== */
+.header{text-align:center;padding:24px 20px 0;flex:none;}
+.title{
+  font-size:25px;margin:0;letter-spacing:1px;font-weight:800;
+  background:linear-gradient(90deg,#b06ad3,#ff9ec7);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:titlePop .8s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes titlePop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.hint{
+  margin:10px 0 0;font-size:14px;color:#a389bd;
+  height:20px;transition:opacity .25s;
+}
+
+/* ========== 舞台 ========== */
+.stage{position:relative;flex:1;}
+
+/* 进度条 */
+.progress{
+  position:absolute;left:50%;top:6px;transform:translateX(-50%);
+  width:180px;height:14px;border-radius:99px;background:rgba(255,255,255,.85);
+  box-shadow:0 4px 12px rgba(155,93,229,.15),inset 0 2px 4px rgba(155,93,229,.12);
+  opacity:0;transition:opacity .3s;overflow:hidden;pointer-events:none;
+}
+.progress.show{opacity:1;}
+.progress i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,#ffb3d9,#b06ad3);
+  border-radius:99px;
+}
+
+/* ========== 葡萄串 ========== */
+.vine{
+  position:absolute;left:7%;top:9%;
+  width:120px;height:130px;
+  transition:opacity .4s,transform .4s;
+}
+.leaf{
+  position:absolute;left:56px;top:-20px;
+  width:36px;height:24px;
+  background:linear-gradient(140deg,#a8eb7c,#5fbf3f);
+  border-radius:0 100% 0 100%;
+  transform:rotate(-20deg);
+  box-shadow:0 3px 6px rgba(70,150,40,.25);
+}
+.grape{
+  position:absolute;width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 32% 26%,#dcb0ff 0%,#a86ae0 45%,#7d3fc0 100%);
+  box-shadow:
+    0 4px 10px rgba(140,80,200,.35),
+    inset -4px -6px 10px rgba(90,40,140,.35),
+    inset 3px 4px 8px rgba(255,255,255,.35);
+  cursor:pointer;
+  animation:grapeFloat 2.6s ease-in-out infinite;
+  will-change:transform;
+}
+.grape::after{
+  content:'';position:absolute;left:8px;top:7px;width:9px;height:6px;
+  border-radius:50%;background:rgba(255,255,255,.78);
+  transform:rotate(-25deg);
+}
+.grape:active{filter:brightness(1.2);}
+@keyframes grapeFloat{
+  0%,100%{transform:translateY(0) rotate(0deg);}
+  50%{transform:translateY(-4px) rotate(2deg);}
+}
+
+/* ========== 杯子 ========== */
+.cup-wrap{
+  position:absolute;left:50%;bottom:34px;
+  transform:translateX(-50%);
+}
+.shadow{
+  position:absolute;left:50%;bottom:-16px;
+  width:136px;height:24px;margin-left:-68px;
+  background:rgba(155,93,229,.20);
+  border-radius:50%;filter:blur(7px);
+}
+.cup{
+  position:relative;
+  width:150px;height:190px;
+  background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.5));
+  border:5px solid #fff;
+  border-radius:14px 14px 48px 48px / 14px 14px 58px 58px;
+  box-shadow:
+    0 12px 26px rgba(155,93,229,.18),
+    inset 0 -8px 16px rgba(200,170,255,.25),
+    inset 8px 0 14px rgba(255,255,255,.85);
+  overflow:hidden;
+  backdrop-filter:blur(4px);
+  cursor:pointer;
+}
+
+/* 液体 */
+.liquid{
+  position:absolute;left:0;right:0;bottom:0;height:0%;
+  background:#9b5de5;
+  z-index:1;
+  border-radius:50% 50% 0 0 / 12px 12px 0 0;
+  transition:height .45s cubic-bezier(.34,1.56,.64,1),background .4s linear;
+}
+.liquid::after{
+  content:'';position:absolute;left:8px;right:8px;top:2px;height:5px;
+  border-radius:99px;background:rgba(255,255,255,.35);
+}
+
+/* 漩涡 */
+.swirl{
+  position:absolute;inset:-20%;z-index:2;opacity:0;
+  background:conic-gradient(from 0deg,
+    rgba(255,255,255,0) 0deg,
+    rgba(255,255,255,.55) 50deg,
+    rgba(255,255,255,0) 110deg,
+    rgba(255,255,255,0) 220deg,
+    rgba(255,255,255,.4) 280deg,
+    rgba(255,255,255,0) 340deg);
+  transition:opacity .3s;
+  pointer-events:none;
+}
+
+/* 杯子的脸 */
+.face{position:absolute;inset:0;z-index:3;pointer-events:none;}
+.face i{
+  position:absolute;top:62px;width:10px;height:12px;border-radius:50%;
+  background:#6b4a8f;transition:.3s;
+}
+.face i:nth-child(1){left:42px;}
+.face i:nth-child(2){right:42px;}
+.face b{
+  position:absolute;top:84px;left:50%;transform:translateX(-50%);
+  width:18px;height:10px;border:3px solid #6b4a8f;border-top:0;
+  border-radius:0 0 18px 18px;
+}
+/* 腮红 */
+.face::before,.face::after{
+  content:'';position:absolute;top:78px;width:12px;height:7px;
+  border-radius:50%;background:rgba(255,140,190,.45);filter:blur(1px);
+}
+.face::before{left:26px;}
+.face::after{right:26px;}
+
+/* ========== 捣棒 ========== */
+.muddler{
+  position:absolute;left:50%;bottom:100%;
+  width:24px;height:118px;margin-left:-12px;margin-bottom:-6px;
+  border-radius:12px 12px 10px 10px;
+  background:linear-gradient(180deg,#ffeec4,#ffcf7a 55%,#f7b34d);
+  border:3px solid #fff;
+  box-shadow:0 6px 14px rgba(200,150,60,.28);
+  opacity:0;transform:translateY(-26px) scale(.9);
+  transition:opacity .35s,transform .35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;z-index:10;
+}
+.muddler.show{opacity:1;transform:translateY(0) scale(1);}
+
+/* ========== 酸奶瓶 ========== */
+.yogurt{
+  position:absolute;left:50%;top:-104px;margin-left:-27px;
+  width:54px;height:78px;
+  background:linear-gradient(170deg,#ffffff,#f4e8ff);
+  border:3px solid #fff;
+  border-radius:12px 12px 16px 16px;
+  box-shadow:0 8px 18px rgba(176,106,211,.22),inset -4px 0 8px rgba(200,170,255,.25);
+  opacity:0;transform:translateY(14px) scale(.85);
+  transition:opacity .35s,transform .35s cubic-bezier(.34,1.56,.64,1);
+  z-index:10;pointer-events:none;cursor:pointer;
+}
+.yogurt.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.yogurt.pouring{transform:translateY(-4px) rotate(-10deg) scale(1.02);}
+.yogurt .lid{
+  position:absolute;left:50%;top:-11px;margin-left:-16px;
+  width:32px;height:12px;border-radius:6px 6px 3px 3px;
+  background:linear-gradient(#b06ad3,#8a4bc0);
+  box-shadow:0 2px 4px rgba(120,60,180,.3);
+}
+.yogurt::after{
+  content:'酸奶';position:absolute;left:0;right:0;top:30px;
+  text-align:center;font-size:11px;font-weight:800;color:#c9a8e8;letter-spacing:1px;
+}
+.yogurt .stream{
+  position:absolute;left:50%;top:100%;margin-left:-6px;
+  width:12px;height:64px;border-radius:8px;
+  background:linear-gradient(#ffffff,#f0ddff);
+  transform:scaleY(0);transform-origin:top center;
+  transition:transform .2s ease-out;
+  box-shadow:0 0 8px rgba(220,190,255,.8);
+}
+.yogurt.pouring .stream{
+  transform:scaleY(1);
+  animation:streamFlow .35s linear infinite;
+}
+@keyframes streamFlow{
+  0%,100%{opacity:.85;}
+  50%{opacity:1;}
+}
+
+/* ========== 水花粒子 ========== */
+.drop{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:#fff;opacity:.95;pointer-events:none;z-index:6;
+}
+
+/* ========== 结果弹窗 ========== */
+.modal{
+  position:absolute;inset:0;z-index:50;
+  display:grid;place-items:center;
+  background:rgba(90,60,120,.26);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .35s;
+}
+.modal.show{opacity:1;pointer-events:auto;}
+.card{
+  width:min(300px,82%);
+  background:#fff;border-radius:30px;
+  padding:26px 22px 24px;text-align:center;
+  box-shadow:0 22px 56px rgba(110,60,160,.3);
+  transform:scale(.55) translateY(20px);
+  transition:transform .55s cubic-bezier(.34,1.56,.64,1);
+}
+.modal.show .card{transform:scale(1) translateY(0);}
+.card-emoji{
+  font-size:44px;line-height:1;
+  animation:emojiBounce 1.4s ease-in-out infinite;
+}
+@keyframes emojiBounce{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-7px) scale(1.06);}
+}
+.card-text{
+  font-size:19px;line-height:1.75;font-weight:800;
+  margin:16px 0 22px;color:#6b4a8f;letter-spacing:.5px;
+}
+.btn{
+  border:none;padding:13px 30px;border-radius:99px;
+  background:linear-gradient(135deg,#ffb3d9,#b06ad3);
+  color:#fff;font-size:15px;font-weight:800;
+  font-family:inherit;cursor:pointer;
+  box-shadow:0 8px 20px rgba(176,106,211,.42);
+  transition:transform .15s;
+}
+.btn:active{transform:scale(.93);}
+
+/* 彩带 */
+.confetti{
+  position:absolute;top:-20px;pointer-events:none;z-index:40;
+}
+</style>
+</head>
+<body>
+
+<div class="game" id="game">
+
+  <div class="header">
+    <h1 class="title">🍇 葡萄酸奶 DIY</h1>
+    <p class="hint" id="hint">把葡萄丢进杯子里吧～</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="progress" id="progressBar"><i id="progressFill"></i></div>
+
+    <!-- 葡萄串 -->
+    <div class="vine" id="vine">
+      <div class="leaf"></div>
+    </div>
+
+    <!-- 杯子 + 工具 -->
+    <div class="cup-wrap" id="cupWrap">
+
+      <div class="muddler" id="muddler"></div>
+
+      <div class="yogurt" id="yogurt">
+        <i class="lid"></i>
+        <i class="stream"></i>
+      </div>
+
+      <div class="cup" id="cup">
+        <div class="liquid" id="liquid"></div>
+        <div class="swirl" id="swirl"></div>
+        <div class="face"><i></i><i></i><b></b></div>
+      </div>
+
+      <div class="shadow"></div>
+    </div>
+  </div>
+
+  <!-- 结果弹窗 -->
+  <div class="modal" id="modal">
+    <div class="card">
+      <div class="card-emoji">🥛🍇</div>
+      <p class="card-text">宝宝晚饭少吃一点，<br>我给你点杯酸奶～</p>
+      <button class="btn" id="againBtn">再来一杯 🍇</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ================= 基础工具 ================= */
+  const $ = s => document.querySelector(s);
+  const rand = (a,b) => a + Math.random()*(b-a);
+  const mix = (a,b,t) => a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+  const rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+
+  /* ================= DOM ================= */
+  const game      = $('#game');
+  const stage     = $('#stage');
+  const hint      = $('#hint');
+  const vine      = $('#vine');
+  const cupWrap   = $('#cupWrap');
+  const cup       = $('#cup');
+  const liquid    = $('#liquid');
+  const swirl     = $('#swirl');
+  const muddler   = $('#muddler');
+  const yogurt    = $('#yogurt');
+  const modal     = $('#modal');
+  const againBtn  = $('#againBtn');
+  const progressBar  = $('#progressBar');
+  const progressFill = $('#progressFill');
+
+  /* ================= 颜色 ================= */
+  const C_JUICE   = [165,105,225];  // 葡萄汁
+  const C_MASHED  = [118,52,178];   // 捣碎后的深紫
+  const C_YOGURT  = [255,250,255];  // 酸奶白
+  const C_FINAL   = [212,180,238];  // 最终奶紫
+
+  /* ================= 状态 ================= */
+  let state;
+  let pouring = false;
+
+  function newState(){
+    return {
+      phase:'pick',
+      picked:0,
+      total:6,
+      mash:0,
+      pour:0,
+      pourDone:false,
+      stirAcc:0,
+      lastAngle:null,
+      liquidH:0,
+      swirlAngle:0,
+      stirring:false
+    };
+  }
+
+  /* ================= 葡萄位置 ================= */
+  const GRAPE_POS = [
+    [24,0],[60,0],
+    [6,40],[42,40],[78,40],
+    [42,80]
+  ];
+
+  /* ================= 液体控制 ================= */
+  function setLiquid(h, color){
+    state.liquidH = h;
+    liquid.style.height = h + '%';
+    if(color) liquid.style.background = color;
+  }
+
+  /* ================= 杯子 Q 弹 ================= */
+  function bumpCup(strength){
+    strength = strength || 1;
+    cup.animate([
+      {transform:'scale(1,1) translateY(0)'},
+      {transform:`scale(${1+0.07*strength},${1-0.07*strength}) translateY(${5*strength}px)`},
+      {transform:`scale(${1-0.04*strength},${1+0.04*strength}) translateY(${-4*strength}px)`},
+      {transform:'scale(1.015,.99) translateY(1px)'},
+      {transform:'scale(1,1) translateY(0)'}
+    ], {duration:520, easing:'ease-out'});
+  }
+
+  /* ================= 水花 ================= */
+  function splash(count, color){
+    count = count || 5;
+    color = color || '#ffffff';
+    const cupH = cup.offsetHeight;
+    const surface = cupH * (state.liquidH/100);
+    for(let i=0;i<count;i++){
+      const d = document.createElement('div');
+      d.className = 'drop';
+      d.style.background = color;
+      d.style.left = rand(24, 108) + 'px';
+      d.style.bottom = Math.max(6, surface) + 'px';
+      cup.appendChild(d);
+
+      const dx = rand(-32, 32);
+      const dy = -rand(20, 62);
+      const dur = rand(480, 780);
+      const an = d.animate([
+        {transform:'translate(0,0) scale(1)', opacity:1},
+        {transform:`translate(${dx}px,${dy}px) scale(.25)`, opacity:0}
+      ], {duration:dur, easing:'cubic-bezier(.2,.7,.5,1)'});
+      an.onfinish = () => d.remove();
+    }
+  }
+
+  /* ================= 阶段 1：摘葡萄 ================= */
+  function initPick(){
+    state.phase = 'pick';
+    hint.textContent = '把葡萄一颗颗丢进杯子里吧～';
+
+    GRAPE_POS.forEach((p, i) => {
+      const g = document.createElement('div');
+      g.className = 'grape';
+      g.style.left = p[0] + 'px';
+      g.style.top  = p[1] + 'px';
+      g.style.animationDelay = (i * 0.22) + 's';
+      g.addEventListener('click', function onPick(){
+        g.removeEventListener('click', onPick);
+        pickGrape(g);
+      });
+      vine.appendChild(g);
+    });
+  }
+
+  function pickGrape(el){
+    el.style.pointerEvents = 'none';
+    el.style.animation = 'none';
+
+    const gRect = el.getBoundingClientRect();
+    const cRect = cup.getBoundingClientRect();
+    const dx = (cRect.left + cRect.width/2) - (gRect.left + gRect.width/2);
+    const dy = (cRect.top + cRect.height*0.58) - (gRect.top + gRect.height/2);
+
+    const fly = el.animate([
+      {transform:'translate(0,0) scale(1)', opacity:1},
+      {transform:`translate(${dx*0.42}px,${dy*0.38 - 76}px) scale(1.32)`, opacity:1, offset:.45},
+      {transform:`translate(${dx}px,${dy}px) scale(.5)`, opacity:1, offset:.86},
+      {transform:`translate(${dx}px,${dy}px) scale(.08)`, opacity:0}
+    ], {duration:660, easing:'cubic-bezier(.5,-0.15,.55,1)', fill:'forwards'});
+    fly.onfinish = () => el.remove();
+
+    // 落杯瞬间的反馈
+    setTimeout(() => {
+      bumpCup(0.9);
+      splash(6, '#cf9df2');
+    }, 420);
+
+    state.picked++;
+    const t = state.picked / state.total;
+    const h = 6 + t * 40;                       // 6% → 46%
+    const col = mix([205,175,240], C_JUICE, t);
+    setLiquid(h, rgb(col));
+
+    if(state.picked >= state.total){
+      setTimeout(startMash, 800);
+    }
+  }
+
+  /* ================= 阶段 2：捣碎 ================= */
+  function startMash(){
+    state.phase = 'mash';
+    state.mash = 0;
+    hint.textContent = '快速点击杯子，把葡萄捣成泥～';
+    muddler.classList.add('show');
+    progressBar.classList.add('show');
+    progressFill.style.width = '0%';
+    cup.addEventListener('pointerdown', onMash);
+  }
+
+  function onMash(e){
+    if(state.phase !== 'mash') return;
+    e.preventDefault();
+
+    state.mash = Math.min(100, state.mash + 9);
+    progressFill.style.width = state.mash + '%';
+
+    // 捣棒下砸
+    muddler.animate([
+      {transform:'translateY(0) rotate(0deg) scale(1)'},
+      {transform:'translateY(52px) rotate(4deg) scale(1)'},
+      {transform:'translateY(-6px) rotate(-2deg) scale(1)'},
+      {transform:'translateY(0) rotate(0deg) scale(1)'}
+    ], {duration:280, easing:'cubic-bezier(.4,1.6,.5,1)'});
+
+    bumpCup(0.7);
+    splash(3, '#c88cf0');
+
+    // 颜色逐渐加深
+    const t = state.mash / 100;
+    const col = mix(C_JUICE, C_MASHED, t);
+    setLiquid(46, rgb(col));
+
+    if(state.mash >= 100){
+      cup.removeEventListener('pointerdown', onMash);
+      hint.textContent = '葡萄泥做好啦！';
+      setTimeout(startPour, 600);
+    }
+  }
+
+  /* ================= 阶段 3：倒酸奶 ================= */
+  function startPour(){
+    state.phase = 'pour';
+    state.pour = 0;
+    state.pourDone = false;
+    pouring = false;
+
+    muddler.classList.remove('show');
+    yogurt.classList.add('show');
+    progressBar.classList.add('show');
+    progressFill.style.width = '0%';
+
+    hint.textContent = '按住酸奶瓶，把酸奶倒进去～';
+
+    yogurt.addEventListener('pointerdown', onPourDown);
+  }
+
+  function onPourDown(e){
+    if(state.phase !== 'pour' || state.pourDone) return;
+    e.preventDefault();
+    e.stopPropagation();
+    pouring = true;
+    yogurt.classList.add('pouring');
+  }
+
+  window.addEventListener('pointerup', () => {
+    if(!pouring) return;
+    pouring = false;
+    yogurt.classList.remove('pouring');
+  });
+
+  function renderPour(){
+    const t = state.pour / 100;
+    progressFill.style.width = state.pour + '%';
+
+    const h = 46 + t * 38;                       // 46% → 84%
+    const col = mix(C_MASHED, C_YOGURT, t * 0.78);
+    setLiquid(h, rgb(col));
+
+    if(state.pour >= 100 && !state.pourDone){
+      state.pourDone = true;
+      pouring = false;
+      yogurt.classList.remove('pouring');
+
+      setTimeout(() => {
+        if(state.phase !== 'pour') return;
+        yogurt.removeEventListener('pointerdown', onPourDown);
+        startStir();
+      }, 500);
+    }
+  }
+
+  /* ================= 阶段 4：搅拌 ================= */
+  function startStir(){
+    state.phase = 'stir';
+    state.stirAcc = 0;
+    state.lastAngle = null;
+    state.stirring = true;
+    state.swirlAngle = 0;
+
+    progressFill.style.width = '0%';
+    hint.textContent = '在杯子里画圈圈搅拌～';
+
+    yogurt.classList.remove('show');
+    swirl.style.opacity = '.85';
+
+    window.addEventListener('pointermove', onStirMove);
+    window.addEventListener('pointerdown', onStirMove);
+  }
+
+  function onStirMove(e){
+    if(state.phase !== 'stir') return;
+
+    const r = cup.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.hypot(dx, dy);
+
+    // 必须在杯子附近画圈
+    if(dist > 150){
+      state.lastAngle = null;
+      return;
+    }
+
+    const a = Math.atan2(dy, dx);
+
+    if(state.lastAngle === null){
+      state.lastAngle = a;
+      return;
+    }
+
+    let d = a - state.lastAngle;
+    while(d >  Math.PI) d -= Math.PI * 2;
+    while(d < -Math.PI) d += Math.PI * 2;
+
+    state.lastAngle = a;
+    state.stirAcc += Math.abs(d);
+
+    const p = Math.min(100, (state.stirAcc / (Math.PI * 4.5)) * 100);
+    progressFill.style.width = p + '%';
+
+    // 颜色混合得更均匀
+    const t = p / 100;
+    const col = mix(mix(C_MASHED, C_YOGURT, .78), C_FINAL, t);
+    liquid.style.background = rgb(col);
+
+    // 漩涡跟随指针
+    state.swirlAngle += d * 57.3 * 0.9;
+
+    if(p >= 100){
+      window.removeEventListener('pointermove', onStirMove);
+      window.removeEventListener('pointerdown', onStirMove);
+      finish();
+    }
+  }
+
+  /* ================= 阶段 5：完成 ================= */
+  function finish(){
+    if(state.phase === 'done') return;
+    state.phase = 'done';
+    state.stirring = false;
+
+    swirl.style.opacity = '0';
+    progressBar.classList.remove('show');
+    hint.textContent = '完成啦！✨';
+
+    // 液面轻微上涨一点，做出"满杯"的满足感
+    setLiquid(86, rgb(C_FINAL));
+
+    // 杯子撒欢
+    cup.animate([
+      {transform:'scale(1,1) translateY(0)'},
+      {transform:'scale(1.14,.86) translateY(10px)'},
+      {transform:'scale(.92,1.12) translateY(-16px)'},
+      {transform:'scale(1.06,.96) translateY(4px)'},
+      {transform:'scale(.98,1.02) translateY(-3px)'},
+      {transform:'scale(1,1) translateY(0)'}
+    ], {duration:900, easing:'cubic-bezier(.34,1.56,.64,1)'});
+
+    splash(14, '#e2c6f7');
+    confetti();
+
+    setTimeout(() => {
+      modal.classList.add('show');
+    }, 620);
+  }
+
+  /* ================= 彩带 ================= */
+  function confetti(){
+    const colors = ['#ffb3d9','#b06ad3','#ffe08a','#9be36d','#8fd3ff','#ff9ec7'];
+    for(let i=0;i<44;i++){
+      const p = document.createElement('i');
+      p.className = 'confetti';
+      p.style.left = rand(0,100) + '%';
+      p.style.background = colors[(Math.random()*colors.length)|0];
+      const w = rand(6,12);
+      const h = rand(7,15);
+      p.style.width = w + 'px';
+      p.style.height = h + 'px';
+      p.style.borderRadius = Math.random() > .5 ? '50%' : '3px';
+      game.appendChild(p);
+
+      const an = p.animate([
+        {transform:'translateY(-30px) rotate(0deg)', opacity:1},
+        {transform:`translateY(${rand(500,860)}px) rotate(${rand(360,900)}deg)`, opacity:0}
+      ], {
+        duration: rand(1800, 3200),
+        delay: rand(0, 500),
+        easing: 'cubic-bezier(.25,.6,.5,1)',
+        fill: 'forwards'
+      });
+      an.onfinish = () => p.remove();
+    }
+  }
+
+  /* ================= 主循环 ================= */
+  function tick(){
+    // 倒酸奶
+    if(state.phase === 'pour' && pouring && !state.pourDone){
+      state.pour = Math.min(100, state.pour + 0.95);
+      renderPour();
+    }
+
+    // 漩涡旋转
+    if(state.phase === 'stir' && state.stirring){
+      swirl.style.transform = `rotate(${state.swirlAngle}deg)`;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  /* ================= 重置 ================= */
+  function reset(){
+    // 清理事件
+    cup.removeEventListener('pointerdown', onMash);
+    window.removeEventListener('pointermove', onStirMove);
+    window.removeEventListener('pointerdown', onStirMove);
+    yogurt.removeEventListener('pointerdown', onPourDown);
+
+    // 清理 DOM
+    vine.innerHTML = '<div class="leaf"></div>';
+    cup.querySelectorAll('.drop').forEach(el => el.remove());
+    game.querySelectorAll('.confetti').forEach(el => el.remove());
+
+    // 重置样式
+    liquid.style.height = '0%';
+    liquid.style.background = 'transparent';
+    swirl.style.opacity = '0';
+    swirl.style.transform = 'rotate(0deg)';
+
+    muddler.classList.remove('show');
+    yogurt.classList.remove('show', 'pouring');
+    progressBar.classList.remove('show');
+    progressFill.style.width = '0%';
+    modal.classList.remove('show');
+
+    pouring = false;
+    state = newState();
+
+    // 重新开始
+    initPick();
+  }
+
+  /* ================= 启动 ================= */
+  state = newState();
+  initPick();
+  requestAnimationFrame(tick);
+
+  againBtn.addEventListener('click', () => {
+    modal.classList.remove('show');
+    setTimeout(reset, 260);
+  });
+
+})();
+</script>
+</body>
+</html>
