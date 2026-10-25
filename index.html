@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>名为「我们」的故事</title>
+  
+  <!-- 引入萌系字体（站酷快乐体） -->
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- 密码锁屏层 -->
+  <div id="lock-screen">
+    <div class="lock-header">
+      <h1>请输入密码</h1>
+      <h2>我们的纪念日</h2>
+    </div>
+    
+    <!-- 密码圆点指示器 -->
+    <div class="password-dots" id="password-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- 手机数字键盘 -->
+    <div class="keypad">
+      <div class="key" data-num="1">1</div>
+      <div class="key" data-num="2">2</div>
+      <div class="key" data-num="3">3</div>
+      <div class="key" data-num="4">4</div>
+      <div class="key" data-num="5">5</div>
+      <div class="key" data-num="6">6</div>
+      <div class="key" data-num="7">7</div>
+      <div class="key" data-num="8">8</div>
+      <div class="key" data-num="9">9</div>
+      <div class="key empty"></div>
+      <div class="key" data-num="0">0</div>
+      <div class="key delete" id="key-delete">⌫</div>
+    </div>
+  </div>
+
+  <!-- 竖屏提示遮罩层 -->
+  <div id="rotate-overlay">
+    <div class="rotate-icon">📱</div>
+    <div class="rotate-text">请横屏体验</div>
+    <div class="rotate-sub">为了更好的视觉效果，请将手机横过来</div>
+  </div>
+
+  <!-- 游戏场景容器 -->
+  <div id="scene-container" class="scene">
+    <div class="bg-image"></div>
+    <div class="light-particles">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    
+    <!-- 新增：顶部标题 -->
+    <h1 class="scene-title">我们的故事</h1>
+    
+    <!-- 新增：底部互动按钮（原点击提示） -->
+    <div class="start-btn" id="start-btn">开始回忆</div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
