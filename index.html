@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <!-- 1. 密码锁屏层 -->
+  <!-- 1. 密码锁屏层（不受旋转影响） -->
   <div id="lock-screen">
     <div class="lock-header">
       <h1>请输入密码</h1>
@@ -40,20 +40,22 @@
     </div>
   </div>
 
-  <!-- 2. 正确后的黑屏横屏提示层 -->
+  <!-- 2. 黑屏转场横屏提示层（不受旋转影响） -->
   <div id="rotate-tip-screen">
     <div class="tip-text">请横屏浏览</div>
   </div>
 
-  <!-- 3. 游戏主界面 -->
-  <div id="scene-container" class="scene">
-    <div class="bg-image"></div>
-    <div class="light-particles">
-      <span></span><span></span><span></span><span></span><span></span>
+  <!-- 3. 游戏主界面（被包裹层包裹，用于强制旋转） -->
+  <div id="game-wrapper">
+    <div id="scene-container" class="scene">
+      <div class="bg-image"></div>
+      <div class="light-particles">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      
+      <h1 class="scene-title">我们的故事</h1>
+      <div class="start-btn" id="start-btn">开始回忆</div>
     </div>
-    
-    <h1 class="scene-title">我们的故事</h1>
-    <div class="start-btn" id="start-btn">开始回忆</div>
   </div>
 
   <script type="module" src="./js/main.js"></script>
