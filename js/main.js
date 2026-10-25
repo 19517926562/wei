@@ -5,6 +5,10 @@ const keys = document.querySelectorAll('.key[data-num]');
 const deleteKey = document.getElementById('key-delete');
 const dotsContainer = document.getElementById('password-dots');
 
+// 新增的转场层和主界面
+const rotateTipScreen = document.getElementById('rotate-tip-screen');
+const sceneContainer = document.getElementById('scene-container');
+
 const CORRECT_PASSWORD = "0728"; 
 let currentInput = "";
 
@@ -36,9 +40,34 @@ function updateDots() {
 
 function checkPassword() {
   if (currentInput === CORRECT_PASSWORD) {
+    // 1. 密码正确，锁屏淡出
     lockScreen.classList.add('fade-out');
-    setTimeout(() => { lockScreen.style.display = 'none'; }, 800); 
+    
+    setTimeout(() => {
+      lockScreen.style.display = 'none';
+      
+      // 2. 显示黑底黄字“请横屏浏览”
+      rotateTipScreen.classList.add('show');
+      
+      // 3. 停留 2.5 秒后
+      setTimeout(() => {
+        // 文字淡出
+        rotateTipScreen.classList.remove('show');
+        
+        // 4. 主界面准备就绪，淡入显示
+        sceneContainer.classList.add('show');
+        
+        // 移除黑屏层（等淡出动画结束）
+        setTimeout(() => {
+          rotateTipScreen.style.display = 'none';
+        }, 600);
+        
+      }, 2500); // 2.5秒停留时间
+      
+    }, 800); // 等待锁屏淡出结束
+    
   } else {
+    // 密码错误，抖动
     dotsContainer.classList.add('error');
     setTimeout(() => {
       dotsContainer.classList.remove('error');
@@ -50,27 +79,20 @@ function checkPassword() {
 
 
 // ================= 2. 主界面“开始回忆”逻辑 =================
-const sceneContainer = document.getElementById('scene-container');
 const startBtn = document.getElementById('start-btn');
-
 let isTransitioning = false;
 
-// 现在只监听“开始回忆”按钮的点击，不再监听全局
 startBtn.addEventListener('click', () => {
   if (isTransitioning) return;
   isTransitioning = true;
 
-  // 触发整个场景淡出
   sceneContainer.classList.add('fade-out');
 
   setTimeout(() => {
     console.log("进入下一环节：加载联机大厅或游戏场景");
-    
     alert("进入下一环节！(这里之后会替换成游戏大厅/房间)");
     
-    // 仅供本地反复测试用的重置逻辑
     isTransitioning = false;
     sceneContainer.classList.remove('fade-out');
-    
   }, 800);
 });
