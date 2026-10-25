@@ -6,6 +6,7 @@ const deleteKey = document.getElementById('key-delete');
 const dotsContainer = document.getElementById('password-dots');
 
 const rotateTipScreen = document.getElementById('rotate-tip-screen');
+const gameWrapper = document.getElementById('game-wrapper');
 const sceneContainer = document.getElementById('scene-container');
 
 const CORRECT_PASSWORD = "0728"; 
@@ -50,22 +51,21 @@ function checkPassword() {
       
       // 3. 停留 2.5 秒后
       setTimeout(() => {
-        // 文字淡出
         rotateTipScreen.classList.remove('show');
         
-        // 4. 主界面准备就绪，淡入显示
+        // 4. 主界面准备就绪，先执行一次旋转检测，再淡入显示
+        updateOrientation();
         sceneContainer.classList.add('show');
         
         setTimeout(() => {
           rotateTipScreen.style.display = 'none';
         }, 600);
         
-      }, 2500); // 2.5秒停留时间
+      }, 2500); 
       
     }, 800); 
     
   } else {
-    // 密码错误，抖动
     dotsContainer.classList.add('error');
     setTimeout(() => {
       dotsContainer.classList.remove('error');
@@ -76,7 +76,38 @@ function checkPassword() {
 }
 
 
-// ================= 2. 主界面“开始回忆”逻辑 =================
+// ================= 2. 强制横屏逻辑 =================
+function updateOrientation() {
+  if (!gameWrapper) return;
+  
+  // 判断是否为移动端（屏幕较窄）
+  const isMobile = window.innerWidth < 1024;
+  
+  if (isMobile) {
+    gameWrapper.classList.add('mobile-landscape');
+    
+    // 如果物理屏幕是竖屏（高 > 宽），则强制旋转
+    if (window.innerHeight > window.innerWidth) {
+      gameWrapper.classList.add('force-landscape');
+    } else {
+      gameWrapper.classList.remove('force-landscape');
+    }
+  } else {
+    // 电脑端不需要旋转
+    gameWrapper.classList.remove('mobile-landscape');
+    gameWrapper.classList.remove('force-landscape');
+  }
+}
+
+// 监听窗口大小改变和屏幕旋转事件
+window.addEventListener('resize', updateOrientation);
+window.addEventListener('orientationchange', () => {
+  // 延迟一小点执行，确保浏览器已经更新了宽高数据
+  setTimeout(updateOrientation, 100);
+});
+
+
+// ================= 3. 主界面“开始回忆”逻辑 =================
 const startBtn = document.getElementById('start-btn');
 let isTransitioning = false;
 
