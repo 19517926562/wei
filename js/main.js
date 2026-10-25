@@ -5,7 +5,6 @@ const keys = document.querySelectorAll('.key[data-num]');
 const deleteKey = document.getElementById('key-delete');
 const dotsContainer = document.getElementById('password-dots');
 
-// 新增的转场层和主界面
 const rotateTipScreen = document.getElementById('rotate-tip-screen');
 const sceneContainer = document.getElementById('scene-container');
 
@@ -57,14 +56,13 @@ function checkPassword() {
         // 4. 主界面准备就绪，淡入显示
         sceneContainer.classList.add('show');
         
-        // 移除黑屏层（等淡出动画结束）
         setTimeout(() => {
           rotateTipScreen.style.display = 'none';
         }, 600);
         
       }, 2500); // 2.5秒停留时间
       
-    }, 800); // 等待锁屏淡出结束
+    }, 800); 
     
   } else {
     // 密码错误，抖动
