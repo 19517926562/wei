@@ -95,7 +95,25 @@ body, html {
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
 
-/* ================= 4. 主界面 ================= */
+/* ================= 4. 游戏主界面及强制横屏包裹层 ================= */
+#game-wrapper {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transform-origin: center center;
+  transition: transform 0.4s ease;
+  z-index: 1; /* 在黑屏之下 */
+}
+
+/* 核心魔法：当 JS 判定为手机竖屏时，强制旋转 90 度 */
+#game-wrapper.force-landscape {
+  width: 100vh;
+  height: 100vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
 .scene {
   position: relative;
   width: 100%; height: 100%;
@@ -105,9 +123,7 @@ body, html {
   overflow: hidden;
 }
 
-.scene.show {
-  opacity: 1;
-}
+.scene.show { opacity: 1; }
 
 .bg-image {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -138,6 +154,7 @@ body, html {
   100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
 }
 
+/* 默认（电脑/大屏）字号 */
 .scene-title {
   position: absolute;
   top: 10%;
@@ -179,14 +196,22 @@ body, html {
 
 .scene.fade-out { opacity: 0; pointer-events: none; }
 
-/* ================= 5. 手机横屏适配 ================= */
+/* ================= 5. 手机端专属适配 ================= */
+/* 当由 JS 判定为手机设备（无论物理横竖）时，应用较小的字号以防超出 */
+
+#game-wrapper.mobile-landscape .scene-title { 
+  font-size: 42px; top: 8%; letter-spacing: 6px; 
+}
+#game-wrapper.mobile-landscape .start-btn { 
+  font-size: 22px; bottom: 8%; letter-spacing: 3px; 
+}
+
+/* 锁屏界面在手机真实横屏时，变为左右排版 */
 @media (orientation: landscape) and (max-height: 500px) {
-  .scene-title { font-size: 48px; top: 8%; letter-spacing: 6px; }
-  .start-btn { font-size: 24px; bottom: 8%; letter-spacing: 3px; }
-  
   #lock-screen { flex-direction: row; justify-content: space-evenly; padding: 0 10%; }
   .lock-header { margin-bottom: 0; }
   .password-dots { margin-bottom: 20px; }
   .keypad { width: 220px; gap: 10px; }
   .key { width: 55px; height: 55px; font-size: 22px; }
+  .tip-text { font-size: 28px; }
 }
