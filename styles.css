@@ -10,7 +10,7 @@ body, html {
   height: 100%;
   overflow: hidden;
   font-family: 'ZCOOL KuaiLe', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background-color: #000; /* 基础背景改为黑色 */
+  background-color: #000; 
   user-select: none;
 }
 
@@ -70,18 +70,18 @@ body, html {
 .key.delete { font-size: 24px; border-color: transparent; background: transparent; }
 .key.delete:active { background: rgba(255, 255, 255, 0.1); }
 
-/* ================= 3. 新增：黑屏转场横屏提示 ================= */
+/* ================= 3. 黑屏转场横屏提示 ================= */
 #rotate-tip-screen {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background-color: #000; /* 纯黑 */
-  z-index: 9000; /* 在锁屏之下，游戏之上 */
+  background-color: #000; 
+  z-index: 9000; 
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0; /* 默认隐藏 */
+  opacity: 0; 
   pointer-events: none;
-  transition: opacity 0.6s ease-in-out; /* 淡入淡出效果 */
+  transition: opacity 0.6s ease-in-out; 
 }
 
 #rotate-tip-screen.show {
@@ -89,7 +89,7 @@ body, html {
 }
 
 .tip-text {
-  color: #FFD700; /* 暖黄 */
+  color: #FFD700; 
   font-size: 36px;
   letter-spacing: 4px;
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
@@ -100,7 +100,7 @@ body, html {
   position: relative;
   width: 100%; height: 100%;
   display: flex; flex-direction: column; align-items: center;
-  opacity: 0; /* 初始隐藏，等转场结束再显示 */
+  opacity: 0; 
   transition: opacity 1s ease-in-out;
   overflow: hidden;
 }
@@ -179,18 +179,14 @@ body, html {
 
 .scene.fade-out { opacity: 0; pointer-events: none; }
 
-/* ================= 5. 强制横屏拦截 ================= */
-#rotate-overlay {
-  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.95); color: #fff; z-index: 99999;
-  flex-direction: column; justify-content: center; align-items: center; text-align: center;
-}
-.rotate-icon { font-size: 50px; margin-bottom: 20px; animation: rotatePhone 2s infinite ease-in-out; }
-.rotate-sub { font-size: 14px; color: #bdc3c7; margin-top: 10px; }
-
-@keyframes rotatePhone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
-
-/* 只要手机是竖屏状态，强制弹出黑底提示拦截 */
-@media (orientation: portrait) and (max-width: 768px) {
-  #rotate-overlay { display: flex; }
+/* ================= 5. 手机横屏适配 ================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  .scene-title { font-size: 48px; top: 8%; letter-spacing: 6px; }
+  .start-btn { font-size: 24px; bottom: 8%; letter-spacing: 3px; }
+  
+  #lock-screen { flex-direction: row; justify-content: space-evenly; padding: 0 10%; }
+  .lock-header { margin-bottom: 0; }
+  .password-dots { margin-bottom: 20px; }
+  .keypad { width: 220px; gap: 10px; }
+  .key { width: 55px; height: 55px; font-size: 22px; }
 }
